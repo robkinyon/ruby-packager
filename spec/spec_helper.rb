@@ -28,4 +28,4 @@ unless on_1_8?
   end
 end
 
-require 'dsl/maker'
+require 'packager/dsl'
