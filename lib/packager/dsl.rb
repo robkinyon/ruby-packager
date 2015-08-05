@@ -3,13 +3,15 @@ require "packager/version"
 require "dsl/maker"
 
 class Packager::DSL < DSL::Maker
-  Package = Struct.new(:name, :version)
+  Package = Struct.new(
+    :name, :version, :type,
+  )
 
   VersionString = nil
   add_type(VersionString) do |attr, *args|
     unless args.empty?
       begin
-        ___set(attr, Gem::Version.new(args[0]))
+        ___set(attr, Gem::Version.new(args[0]).to_s)
       rescue ArgumentError
         raise "'#{args[0]}' is not a legal version string" 
       end
@@ -20,12 +22,14 @@ class Packager::DSL < DSL::Maker
   add_entrypoint(:package, {
     :name => String,
     :version => VersionString,
+    :type => String,
   }) do
-    Package.new(name, version)
+    Package.new(name, version, type)
   end
   add_verification(:package) do |item|
     return "Every package must have a name" unless item.name
     return "Every package must have a version" unless item.version
+    return "Every package must have a type" unless item.type
     return
   end
 end

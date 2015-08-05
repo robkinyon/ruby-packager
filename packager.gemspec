@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 1.9.3'
 
   s.add_dependency 'dsl_maker', '~> 0.0', '>= 0.0.6'
+  s.add_dependency 'fpm', '~> 1.4', '>= 1.1.0'
 
   # Run rspec tests from rake
   s.add_development_dependency 'rake', '~> 10'

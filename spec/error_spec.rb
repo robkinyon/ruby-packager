@@ -27,4 +27,15 @@ describe "Packager validations" do
       }
     }.to raise_error("'b' is not a legal version string")
   end
+
+  it "rejects a package without a type" do
+    expect {
+      Packager::DSL.execute_dsl {
+        package {
+          name 'foo'
+          version '0.0.1'
+        }
+      }
+    }.to raise_error("Every package must have a type")
+  end
 end
