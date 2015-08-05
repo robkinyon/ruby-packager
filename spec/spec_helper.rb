@@ -13,10 +13,7 @@ unless on_1_8?
     SimpleCov.configure do
       add_filter '/spec/'
       add_filter '/vendor/'
-
-      # This is just until we test Executor.execute_command
-      minimum_coverage 97
-
+      minimum_coverage 100
       refuse_coverage_drop
     end
 
