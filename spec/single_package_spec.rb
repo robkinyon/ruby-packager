@@ -24,4 +24,19 @@ describe "Packager single package" do
       '-t', 'deb',
     ])
   end
+
+  context "default type" do
+    before(:all) { Packager::DSL.default_type = 'dir' }
+    after(:all) { Packager::DSL.default_type = nil }
+
+    it "will use the default type" do
+      item = Packager::DSL.execute_dsl {
+        package {
+          name 'foo'
+          version '0.0.1'
+        }
+      }
+      expect(item.type).to eq('dir')
+    end
+  end
 end

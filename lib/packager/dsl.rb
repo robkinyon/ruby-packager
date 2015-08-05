@@ -3,6 +3,10 @@ require "packager/version"
 require "dsl/maker"
 
 class Packager::DSL < DSL::Maker
+  class << self
+    attr_accessor :default_type
+  end
+
   Package = Struct.new(
     :name, :version, :type,
   )
@@ -24,6 +28,9 @@ class Packager::DSL < DSL::Maker
     :version => VersionString,
     :type => String,
   }) do
+    # Must check truthiness of default_type because String coerces.
+    type(Packager::DSL.default_type) if !type && Packager::DSL.default_type
+
     Package.new(name, version, type)
   end
   add_verification(:package) do |item|
