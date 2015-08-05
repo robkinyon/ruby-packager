@@ -4,7 +4,11 @@ require "dsl/maker"
 
 class Packager::DSL < DSL::Maker
   class << self
-    attr_accessor :default_type
+    attr_writer :default_type
+    def default_type(*args)
+      @default_type = args[0] unless args.empty?
+      @default_type
+    end
   end
 
   Package = Struct.new(
