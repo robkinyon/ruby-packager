@@ -12,7 +12,11 @@ class Packager::DSL < DSL::Maker
   end
 
   Package = Struct.new(
-    :name, :version, :type,
+    :name, :version, :type, :files,
+  )
+
+  File = Struct.new(
+    :source, :dest,
   )
 
   add_type(VersionString = {}) do |attr, *args|
@@ -30,10 +34,16 @@ class Packager::DSL < DSL::Maker
     :name => String,
     :version => VersionString,
     :type => Any,
+    :file => generate_dsl({
+      :source => String,
+      :dest   => String,
+    }) do
+      File.new(source, dest)
+    end
   }) do
     type(Packager::DSL.default_type) unless type
 
-    Package.new(name, version, type)
+    Package.new(name, version, type, file ? [file] : nil)
   end
   add_verification(:package) do |item|
     return "Every package must have a name" unless item.name

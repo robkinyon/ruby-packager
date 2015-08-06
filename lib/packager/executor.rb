@@ -1,5 +1,7 @@
 require 'packager/version'
 
+require 'pathname'
+
 class Packager
   class Executor
     def self.execute_on(items)
@@ -10,13 +12,25 @@ class Packager
     end
 
     def self.create_package_for(item)
+      source = 'empty'
+      directories = {}
+      if item.files
+        source = 'dir'
+        item.files.each do |file|
+          root = nil
+          Pathname.new(file.dest).each_filename {|x| root ||= x }
+          directories[root] = true
+        end
+      end
+
       cmd = [
         'fpm',
         '--name', item.name,
         '--version', item.version,
-        '-s', 'empty',
+        '-s', source,
         '-t', item.type,
-      ]
+        directories.keys
+      ].flatten
       execute_command(cmd)
       return cmd
     end
