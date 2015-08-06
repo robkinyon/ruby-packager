@@ -1,17 +1,17 @@
-describe "Packager single package" do
+describe "Packager empty packages" do
   it "can create a package without files" do
     item = Packager::DSL.execute_dsl {
       package {
         name 'foo'
         version '0.0.1'
-        type 'deb'
+        type 'dir'
       }
     }
 
     expect(item).to be_instance_of(Packager::DSL::Package)
     expect(item.name).to eq('foo')
     expect(item.version).to eq('0.0.1')
-    expect(item.type).to eq('deb')
+    expect(item.type).to eq('dir')
 
     # Stub out execute_command
     allow(Packager::Executor).to receive(:execute_command) {}
@@ -21,7 +21,7 @@ describe "Packager single package" do
       '--name', 'foo',
       '--version', '0.0.1',
       '-s', 'empty',
-      '-t', 'deb',
+      '-t', 'dir',
     ])
   end
 

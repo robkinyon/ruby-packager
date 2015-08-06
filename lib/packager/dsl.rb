@@ -15,8 +15,7 @@ class Packager::DSL < DSL::Maker
     :name, :version, :type,
   )
 
-  VersionString = nil
-  add_type(VersionString) do |attr, *args|
+  add_type(VersionString = {}) do |attr, *args|
     unless args.empty?
       begin
         ___set(attr, Gem::Version.new(args[0]).to_s)
@@ -30,10 +29,9 @@ class Packager::DSL < DSL::Maker
   add_entrypoint(:package, {
     :name => String,
     :version => VersionString,
-    :type => String,
+    :type => Any,
   }) do
-    # Must check truthiness of default_type because String coerces.
-    type(Packager::DSL.default_type) if !type && Packager::DSL.default_type
+    type(Packager::DSL.default_type) unless type
 
     Package.new(name, version, type)
   end
