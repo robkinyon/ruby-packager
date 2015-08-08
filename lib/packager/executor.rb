@@ -13,13 +13,12 @@ class Packager
 
     def self.create_package_for(item)
       source = 'empty'
-      directories = {}
       if item.files
         source = 'dir'
         item.files.each do |file|
-          root = nil
-          Pathname.new(file.dest).each_filename {|x| root ||= x }
-          directories[root] = true
+          dest = (file.dest || '').gsub /^\//, ''
+          FileUtils.mkdir_p File.dirname(dest)
+          FileUtils.cp_r(file.source, dest)
         end
       end
 
@@ -29,15 +28,25 @@ class Packager
         '--version', item.version,
         '-s', source,
         '-t', item.type,
-        directories.keys
       ].flatten
+
+      if source == 'dir'
+        Dir.foreach('.') do |entry|
+          if File.directory?(File.join('.', entry)) && !entry.match(/^\.\.?$/)
+            cmd << entry
+          end
+        end
+      end
+
       execute_command(cmd)
       return cmd
     end
 
     def self.execute_command(cmd)
       #FileUtils.chdir('/tmp') do
-        `#{cmd.join(' ')}`
+        x = `#{cmd.join(' ')}`
+        #system *cmd
+        raise x if x.match(/:error/)
       #end
     end
   end

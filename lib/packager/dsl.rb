@@ -40,8 +40,9 @@ class Packager::DSL < DSL::Maker
     }) do
       File.new(source, dest)
     end
-  }) do
+  }) do |*args|
     type(Packager::DSL.default_type) unless type
+    default(:name, args, 0)
 
     Package.new(name, version, type, file ? [file] : nil)
   end

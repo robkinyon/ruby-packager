@@ -4,13 +4,19 @@ describe "Packager empty packages" do
   before(:all) { Packager::DSL.default_type('dir') }
   after(:all) { Packager::DSL.default_type = nil }
 
-  let(:sourcedir) { Dir.mktmpdir }
+  # This won't work, but it's closer to what we want
+  #module Globals
+    let(:sourcedir) { Dir.mktmpdir }
+    let(:workdir)   { Dir.mktmpdir }
+  #end
 
   it "can create a package with files" do
+    # This is a wart.
+    $sourcedir = sourcedir
+
     FileUtils.chdir(sourcedir) do
       FileUtils.touch('file1')
     end
-    $sourcedir = sourcedir
 
     item = Packager::DSL.execute_dsl {
       package {
@@ -34,19 +40,19 @@ describe "Packager empty packages" do
     expect(item.files[0].dest).to eq("/foo/bar/file2")
 
     # Stub out execute_command
-    allow(Packager::Executor).to receive(:execute_command) {}
-    rv = Packager::Executor.execute_on(item)
-    expect(rv[0]).to eq([
-      'fpm',
-      '--name', 'foo',
-      '--version', '0.0.1',
-      '-s', 'dir',
-      '-t', 'dir',
-      'foo'
-    ])
+    FileUtils.chdir(workdir) do
+      rv = Packager::Executor.execute_on(item)
+      expect(rv[0]).to eq([
+        'fpm',
+        '--name', 'foo',
+        '--version', '0.0.1',
+        '-s', 'dir',
+        '-t', 'dir',
+        'foo'
+      ])
 
-    # Need to verify that the file actually makes it there.
-    # Either we need to inspect the build area (somehow) or actually
-    # run the packager and inspect the result
+      expect(File).to exist('foo.dir')
+      expect(File).to exist('foo.dir/foo/bar/file2')
+    end
   end
 end
