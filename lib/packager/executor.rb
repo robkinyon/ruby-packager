@@ -31,8 +31,8 @@ class Packager
       ].flatten
 
       if source == 'dir'
-        Dir.foreach('.') do |entry|
-          if File.directory?(File.join('.', entry)) && !entry.match(/^\.\.?$/)
+        Dir.glob('*') do |entry|
+          if File.directory?(entry)
             cmd << entry
           end
         end
