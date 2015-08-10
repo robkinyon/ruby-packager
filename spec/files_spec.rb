@@ -1,16 +1,49 @@
 require 'tmpdir'
 
-describe "Packager empty packages" do
+describe "Packager packages" do
   before(:all) { Packager::DSL.default_type('dir') }
   after(:all) { Packager::DSL.default_type = nil }
 
-  # This won't work, but it's closer to what we want
-  #module Globals
-    let(:sourcedir) { Dir.mktmpdir }
-    let(:workdir)   { Dir.mktmpdir }
-  #end
+  let(:sourcedir) { Dir.mktmpdir }
+  let(:workdir)   { Dir.mktmpdir }
 
-  it "can create a package with files" do
+  context "can create a package with no files" do
+    context "when examining" do
+      item = Packager::DSL.execute_dsl {
+        package {
+          name 'foo'
+          version '0.0.1'
+        }
+      }
+      subject { item }
+      it { is_expected.to be_instance_of(Packager::DSL::Package) }
+      it { name.to eq('foo') }
+      it { version.to eq('0.0.1') }
+      it { type.to eq('dir') }
+      it { files.to be(nil) }
+    end
+    #expect(item).to be_instance_of(Packager::DSL::Package)
+    #expect(item.name).to eq('foo')
+    #expect(item.version).to eq('0.0.1')
+    #expect(item.type).to eq('dir')
+    #expect(item.files).to be(nil)
+
+    FileUtils.chdir(workdir) do
+      rv = Packager::Executor.execute_on(item)
+      expect(rv[0]).to eq([
+        'fpm',
+        '--name', 'foo',
+        '--version', '0.0.1',
+        '-s', 'empty',
+        '-t', 'dir',
+      ])
+
+      expect(File).to exist('foo.dir')
+      expect(Dir['foo.dir/*'].empty?).to be(true)
+    end
+  end
+
+  it "can create a package with one file" do
     # This is a wart.
     $sourcedir = sourcedir
 
@@ -53,6 +86,62 @@ describe "Packager empty packages" do
 
       expect(File).to exist('foo.dir')
       expect(File).to exist('foo.dir/foo/bar/file2')
+    end
+  end
+
+  it "can create a package with two file" do
+    # This is a wart.
+    $sourcedir = sourcedir
+
+    FileUtils.chdir(sourcedir) do
+      FileUtils.touch('file1')
+      FileUtils.touch('file3')
+    end
+
+    item = Packager::DSL.execute_dsl {
+      package {
+        name 'foo'
+        version '0.0.1'
+
+        file {
+          source File.join($sourcedir, 'file1')
+          dest "/foo/bar/file2"
+        }
+
+        file {
+          source File.join($sourcedir, 'file3')
+          dest "/bar/foo/file4"
+        }
+      }
+    }
+
+    expect(item).to be_instance_of(Packager::DSL::Package)
+    expect(item.name).to eq('foo')
+    expect(item.version).to eq('0.0.1')
+    expect(item.type).to eq('dir')
+    expect(item.files).to be_instance_of(Array)
+    expect(item.files[0]).to be_instance_of(Packager::DSL::File)
+    expect(item.files[0].source).to eq(File.join(sourcedir, 'file1'))
+    expect(item.files[0].dest).to eq("/foo/bar/file2")
+    expect(item.files[1]).to be_instance_of(Packager::DSL::File)
+    expect(item.files[1].source).to eq(File.join(sourcedir, 'file3'))
+    expect(item.files[1].dest).to eq("/bar/foo/file4")
+
+    # Stub out execute_command
+    FileUtils.chdir(workdir) do
+      rv = Packager::Executor.execute_on(item)
+      expect(rv[0]).to eq([
+        'fpm',
+        '--name', 'foo',
+        '--version', '0.0.1',
+        '-s', 'dir',
+        '-t', 'dir',
+        'bar', 'foo'
+      ])
+
+      expect(File).to exist('foo.dir')
+      expect(File).to exist('foo.dir/foo/bar/file2')
+      expect(File).to exist('foo.dir/bar/foo/file4')
     end
   end
 end

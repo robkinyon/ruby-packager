@@ -1,13 +1,17 @@
 require 'packager/version'
 
-require 'pathname'
+require 'tmpdir'
 
 class Packager
   class Executor
     def self.execute_on(items)
       items = [items] unless items.instance_of? Array
       items.collect do |item|
-        create_package_for(item)
+        #Dir.mktmpdir do |tempdir|
+        #  Dir.chdir(tempdir) do
+            create_package_for(item)
+        #  end
+        #end
       end
     end
 
