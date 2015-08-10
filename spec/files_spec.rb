@@ -7,26 +7,19 @@ describe "Packager packages" do
   let(:sourcedir) { Dir.mktmpdir }
   let(:workdir)   { Dir.mktmpdir }
 
-  context "can create a package with no files" do
-    context "when examining" do
-      item = Packager::DSL.execute_dsl {
-        package {
-          name 'foo'
-          version '0.0.1'
-        }
+  it "can create a package with no files" do
+    item = Packager::DSL.execute_dsl {
+      package {
+        name 'foo'
+        version '0.0.1'
       }
-      subject { item }
-      it { is_expected.to be_instance_of(Packager::DSL::Package) }
-      it { name.to eq('foo') }
-      it { version.to eq('0.0.1') }
-      it { type.to eq('dir') }
-      it { files.to be(nil) }
-    end
-    #expect(item).to be_instance_of(Packager::DSL::Package)
-    #expect(item.name).to eq('foo')
-    #expect(item.version).to eq('0.0.1')
-    #expect(item.type).to eq('dir')
-    #expect(item.files).to be(nil)
+    }
+
+    expect(item).to be_instance_of(Packager::DSL::Package)
+    expect(item.name).to eq('foo')
+    expect(item.version).to eq('0.0.1')
+    expect(item.type).to eq('dir')
+    expect(item.files).to be(nil)
 
     FileUtils.chdir(workdir) do
       rv = Packager::Executor.execute_on(item)
