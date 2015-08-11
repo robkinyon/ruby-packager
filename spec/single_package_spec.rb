@@ -6,7 +6,7 @@ describe "Packager empty packages" do
         version '0.0.1'
         type 'dir'
       }
-    }
+    }[0]
 
     expect(item).to be_instance_of(Packager::DSL::Package)
     expect(item.name).to eq('foo')
@@ -35,7 +35,7 @@ describe "Packager empty packages" do
           name 'foo'
           version '0.0.1'
         }
-      }
+      }[0]
       expect(item.type).to eq('dir')
     end
   end

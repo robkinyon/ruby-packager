@@ -21,23 +21,23 @@ class Packager::CLI < Thor
       raise Thor::Error, "No filenames provided for validate"
     end
 
-    #args.each do |filename|
-    #  unless File.exists? filename
-    #    puts "#{filename} cannot be found"
-    #    next
-    #  end
+    args.each do |filename|
+      unless File.exists? filename
+        raise Thor::Error, "'#{filename}' cannot be found"
+      end
 
-    #  begin
-    #    items = Packager::DSL.parse_dsl(IO.read(filename))
-    #    if !items || items.empty?
-    #      puts "#{filename} has nothing in it"
-    #    else
-    #      puts "#{filename} parses cleanly"
-    #    end
-    #  rescue Exception => e
-    #    puts "#{filename} has the following errors:\n#{e}"
-    #  end
-    #end
+      begin
+        items = Packager::DSL.parse_dsl(IO.read(filename))
+      rescue Exception => e
+        raise Thor::Error, "'#{filename}' has the following errors:\n#{e}"
+      end
+
+      if !items || items.empty?
+        raise Thor::Error, "'#{filename}' produces nothing"
+      else
+        puts "'#{filename}' parses cleanly"
+      end
+    end
   end
 
   default_task :create

@@ -13,7 +13,7 @@ describe "Packager packages" do
         name 'foo'
         version '0.0.1'
       }
-    }
+    }[0]
 
     expect(item).to be_instance_of(Packager::DSL::Package)
     expect(item.name).to eq('foo')
@@ -54,7 +54,7 @@ describe "Packager packages" do
           dest "/foo/bar/file2"
         }
       }
-    }
+    }[0]
 
     expect(item).to be_instance_of(Packager::DSL::Package)
     expect(item.name).to eq('foo')
@@ -106,7 +106,7 @@ describe "Packager packages" do
           dest "/bar/foo/file4"
         }
       }
-    }
+    }[0]
 
     expect(item).to be_instance_of(Packager::DSL::Package)
     expect(item.name).to eq('foo')
@@ -120,7 +120,6 @@ describe "Packager packages" do
     expect(item.files[1].source).to eq(File.join(sourcedir, 'file3'))
     expect(item.files[1].dest).to eq("/bar/foo/file4")
 
-    # Stub out execute_command
     FileUtils.chdir(workdir) do
       rv = Packager::Executor.execute_on(item)
       expect(rv[0]).to eq([

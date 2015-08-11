@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '>= 1.9.3'
 
-  s.add_dependency 'dsl_maker', '~> 0.0', '>= 0.0.9'
+  s.add_dependency 'dsl_maker', '~> 0.1', '>= 0.1.0'
   s.add_dependency 'fpm', '~> 1.4', '>= 1.1.0'
   s.add_dependency 'thor', '~> 0.0', '>= 0.19.0'
 
