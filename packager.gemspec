@@ -21,6 +21,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'dsl_maker', '~> 0.0', '>= 0.0.9'
   s.add_dependency 'fpm', '~> 1.4', '>= 1.1.0'
+  s.add_dependency 'thor', '~> 0.0', '>= 0.19.0'
 
   # Run rspec tests from rake
   s.add_development_dependency 'rake', '~> 10'

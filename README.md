@@ -9,4 +9,39 @@
 [![Code Coverage](https://img.shields.io/codecov/c/github/robkinyon/ruby-packager.svg)](https://codecov.io/github/robkinyon/ruby-packager)
 [![Inline docs](http://inch-ci.org/github/robkinyon/ruby-packager.png)](http://inch-ci.org/github/robkinyon/ruby-packager)
 
-A DSL to create packages
+## TL;DR
+
+Create the following file:
+```ruby
+package {
+  name "foo"
+  version "0.0.1"
+  
+  file {
+    source "/some/place/in/filesystem"
+    dest "/some/place/to/put/it"
+  }
+
+  files {
+    source "/some/bunch/of/files/*"
+    dest "/some/other/place"
+  }
+}
+```
+
+Invoke the associated `packager` script as follows:
+```shell
+$ packager --output deb <filename>
+```
+
+You now have `foo-0.0.1.x86_64.deb` with several files in it wherever you
+invoked `packager`.
+
+## Methods
+
+* package
+   * name    String
+   * version VersionString
+   * file / files
+      * source String
+      * dest   String

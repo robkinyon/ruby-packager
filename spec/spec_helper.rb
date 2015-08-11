@@ -29,3 +29,19 @@ unless on_1_8?
 end
 
 require 'packager'
+
+# This is taken from:
+# https://github.com/erikhuda/thor/blob/d634d240bdc0462fe677031e1dc6ed656e54f27e/spec/helper.rb#L49
+# Found via http://bokstuff.com/blog/testing-thor-command-lines-with-rspec/
+def capture(stream)
+  begin
+    stream = stream.to_s
+    eval "$#{stream} = StringIO.new"
+    yield
+    result = eval("$#{stream}").string
+  ensure
+    eval("$#{stream} = #{stream.upcase}")
+  end
+
+  result
+end
