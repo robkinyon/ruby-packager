@@ -8,21 +8,21 @@ describe "Packager packages" do
   let(:workdir)   { Dir.mktmpdir }
 
   it "can create a package with no files" do
-    item = Packager::DSL.execute_dsl {
+    items = Packager::DSL.execute_dsl {
       package {
         name 'foo'
         version '0.0.1'
       }
-    }[0]
+    }
 
-    expect(item).to be_instance_of(Packager::DSL::Package)
-    expect(item.name).to eq('foo')
-    expect(item.version).to eq('0.0.1')
-    expect(item.type).to eq('dir')
-    expect(item.files).to eq([])
+    expect(items[0]).to be_instance_of(Packager::DSL::Package)
+    expect(items[0].name).to eq('foo')
+    expect(items[0].version).to eq('0.0.1')
+    expect(items[0].type).to eq('dir')
+    expect(items[0].files).to eq([])
 
     FileUtils.chdir(workdir) do
-      rv = Packager::Executor.execute_on(item)
+      rv = Packager::Executor.execute_on(items)
       expect(rv[0]).to eq([
         'fpm',
         '--name', 'foo',
@@ -44,7 +44,7 @@ describe "Packager packages" do
     # This is a wart.
     $sourcedir = sourcedir
 
-    item = Packager::DSL.execute_dsl {
+    items = Packager::DSL.execute_dsl {
       package {
         name 'foo'
         version '0.0.1'
@@ -54,20 +54,20 @@ describe "Packager packages" do
           dest "/foo/bar/file2"
         }
       }
-    }[0]
+    }
 
-    expect(item).to be_instance_of(Packager::DSL::Package)
-    expect(item.name).to eq('foo')
-    expect(item.version).to eq('0.0.1')
-    expect(item.type).to eq('dir')
-    expect(item.files).to be_instance_of(Array)
-    expect(item.files[0]).to be_instance_of(Packager::DSL::File)
-    expect(item.files[0].source).to eq(File.join(sourcedir, 'file1'))
-    expect(item.files[0].dest).to eq("/foo/bar/file2")
+    expect(items[0]).to be_instance_of(Packager::DSL::Package)
+    expect(items[0].name).to eq('foo')
+    expect(items[0].version).to eq('0.0.1')
+    expect(items[0].type).to eq('dir')
+    expect(items[0].files).to be_instance_of(Array)
+    expect(items[0].files[0]).to be_instance_of(Packager::DSL::File)
+    expect(items[0].files[0].source).to eq(File.join(sourcedir, 'file1'))
+    expect(items[0].files[0].dest).to eq("/foo/bar/file2")
 
     # Stub out execute_command
     FileUtils.chdir(workdir) do
-      rv = Packager::Executor.execute_on(item)
+      rv = Packager::Executor.execute_on(items)
       expect(rv[0]).to eq([
         'fpm',
         '--name', 'foo',
@@ -91,7 +91,7 @@ describe "Packager packages" do
     # This is a wart.
     $sourcedir = sourcedir
 
-    item = Packager::DSL.execute_dsl {
+    items = Packager::DSL.execute_dsl {
       package {
         name 'foo'
         version '0.0.1'
@@ -106,22 +106,22 @@ describe "Packager packages" do
           dest "/bar/foo/file4"
         }
       }
-    }[0]
+    }
 
-    expect(item).to be_instance_of(Packager::DSL::Package)
-    expect(item.name).to eq('foo')
-    expect(item.version).to eq('0.0.1')
-    expect(item.type).to eq('dir')
-    expect(item.files).to be_instance_of(Array)
-    expect(item.files[0]).to be_instance_of(Packager::DSL::File)
-    expect(item.files[0].source).to eq(File.join(sourcedir, 'file1'))
-    expect(item.files[0].dest).to eq("/foo/bar/file2")
-    expect(item.files[1]).to be_instance_of(Packager::DSL::File)
-    expect(item.files[1].source).to eq(File.join(sourcedir, 'file3'))
-    expect(item.files[1].dest).to eq("/bar/foo/file4")
+    expect(items[0]).to be_instance_of(Packager::DSL::Package)
+    expect(items[0].name).to eq('foo')
+    expect(items[0].version).to eq('0.0.1')
+    expect(items[0].type).to eq('dir')
+    expect(items[0].files).to be_instance_of(Array)
+    expect(items[0].files[0]).to be_instance_of(Packager::DSL::File)
+    expect(items[0].files[0].source).to eq(File.join(sourcedir, 'file1'))
+    expect(items[0].files[0].dest).to eq("/foo/bar/file2")
+    expect(items[0].files[1]).to be_instance_of(Packager::DSL::File)
+    expect(items[0].files[1].source).to eq(File.join(sourcedir, 'file3'))
+    expect(items[0].files[1].dest).to eq("/bar/foo/file4")
 
     FileUtils.chdir(workdir) do
-      rv = Packager::Executor.execute_on(item)
+      rv = Packager::Executor.execute_on(items)
       expect(rv[0]).to eq([
         'fpm',
         '--name', 'foo',

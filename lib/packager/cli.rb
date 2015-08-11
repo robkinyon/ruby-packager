@@ -32,11 +32,11 @@ class Packager::CLI < Thor
         raise Thor::Error, "'#{filename}' has the following errors:\n#{e}"
       end
 
-      if !items || items.empty?
+      if items.empty?
         raise Thor::Error, "'#{filename}' produces nothing"
-      else
-        puts "'#{filename}' parses cleanly"
       end
+
+      puts "'#{filename}' parses cleanly"
     end
   end
 

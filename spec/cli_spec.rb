@@ -51,7 +51,9 @@ describe Packager::CLI do
         }
       ")
 
-      expect(capture(:stdout) { subject.validate(tempfile) }).to eq("'#{tempfile}' parses cleanly\n")
+      expect(
+        capture(:stdout) { subject.validate(tempfile) }
+      ).to eq("'#{tempfile}' parses cleanly\n")
     end
   end
 end

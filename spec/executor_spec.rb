@@ -17,7 +17,7 @@ describe "Packager Executor" do
     Dir.mktmpdir do |tmpdir|
       FileUtils.chdir(tmpdir) do
         item = Packager::DSL::Package.new('foo', '0.0.1', 'dir', [])
-        Packager::Executor.execute_on(item)
+        Packager::Executor.execute_on([item])
         expect(File).to exist('foo.dir')
       end
     end

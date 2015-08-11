@@ -5,7 +5,6 @@ require 'tmpdir'
 class Packager
   class Executor
     def self.execute_on(items)
-      items = [items] unless items.instance_of? Array
       #curdir = Dir.pwd
       items.collect do |item|
         #Dir.mktmpdir do |tempdir|
