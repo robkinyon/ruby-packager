@@ -16,7 +16,7 @@ describe "Packager Executor" do
   it "creates an empty directory" do
     Dir.mktmpdir do |tmpdir|
       FileUtils.chdir(tmpdir) do
-        item = Packager::DSL::Package.new('foo', '0.0.1', 'dir')
+        item = Packager::DSL::Package.new('foo', '0.0.1', 'dir', [])
         Packager::Executor.execute_on(item)
         expect(File).to exist('foo.dir')
       end

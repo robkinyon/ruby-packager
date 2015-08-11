@@ -17,7 +17,7 @@ class Packager
 
     def self.create_package_for(item)
       source = 'empty'
-      if item.files
+      unless item.files.empty?
         source = 'dir'
         item.files.each do |file|
           dest = (file.dest || '').gsub /^\//, ''
@@ -35,11 +35,14 @@ class Packager
       ].flatten
 
       if source == 'dir'
+        directories = []
         Dir.glob('*') do |entry|
           if File.directory?(entry)
-            cmd << entry
+            directories << entry
           end
         end
+        # Sort the directories being added to make it easier to test
+        cmd.concat(directories.sort)
       end
 
       execute_command(cmd)

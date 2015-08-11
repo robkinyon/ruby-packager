@@ -34,17 +34,18 @@ class Packager::DSL < DSL::Maker
     :name => String,
     :version => VersionString,
     :type => Any,
-    :file => generate_dsl({
+    :files => ArrayOf[generate_dsl({
       :source => String,
       :dest   => String,
     }) do
       File.new(source, dest)
-    end
+    end],
+    :file => AliasOf(:files),
   }) do |*args|
     type(Packager::DSL.default_type) unless type
     default(:name, args, 0)
 
-    Package.new(name, version, type, file ? [file] : nil)
+    Package.new(name, version, type, files)
   end
   add_verification(:package) do |item|
     return "Every package must have a name" unless item.name

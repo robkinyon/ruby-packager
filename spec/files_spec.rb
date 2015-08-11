@@ -19,7 +19,7 @@ describe "Packager packages" do
     expect(item.name).to eq('foo')
     expect(item.version).to eq('0.0.1')
     expect(item.type).to eq('dir')
-    expect(item.files).to be(nil)
+    expect(item.files).to eq([])
 
     FileUtils.chdir(workdir) do
       rv = Packager::Executor.execute_on(item)
@@ -37,12 +37,12 @@ describe "Packager packages" do
   end
 
   it "can create a package with one file" do
-    # This is a wart.
-    $sourcedir = sourcedir
-
     FileUtils.chdir(sourcedir) do
       FileUtils.touch('file1')
     end
+
+    # This is a wart.
+    $sourcedir = sourcedir
 
     item = Packager::DSL.execute_dsl {
       package {
@@ -83,13 +83,13 @@ describe "Packager packages" do
   end
 
   it "can create a package with two file" do
-    # This is a wart.
-    $sourcedir = sourcedir
-
     FileUtils.chdir(sourcedir) do
       FileUtils.touch('file1')
       FileUtils.touch('file3')
     end
+
+    # This is a wart.
+    $sourcedir = sourcedir
 
     item = Packager::DSL.execute_dsl {
       package {
