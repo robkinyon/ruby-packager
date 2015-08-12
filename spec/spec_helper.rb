@@ -45,3 +45,11 @@ def capture(stream)
 
   result
 end
+
+def append_to_file(file, content)
+  f = File.new(file, 'a+')
+  f.write(content)
+  f.flush # VERY IMPORTANT
+  f.close
+end
+
