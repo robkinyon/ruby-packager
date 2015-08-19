@@ -16,7 +16,12 @@ describe Packager::Executor do
   subject(:executor) { Packager::Executor.new(:dryrun => true) }
 
   it "creates an empty directory" do
-    item = Packager::Struct::Package.new('foo', '0.0.1', 'dir', [])
+    item = Packager::Struct::Package.new(
+      :name => 'foo',
+      :version => '0.0.1',
+      :type => 'dir',
+      :files => [],
+    )
     executor.execute_on([item])
     expect(executor.command[0]).to eq([
       'fpm',
