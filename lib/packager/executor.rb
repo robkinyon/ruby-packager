@@ -4,7 +4,13 @@ require 'tmpdir'
 
 class Packager
   class Executor
-    def self.execute_on(items)
+    attr_accessor :command
+
+    def initialize
+      self.command = []
+    end
+
+    def execute_on(items)
       #curdir = Dir.pwd
       items.collect do |item|
         #Dir.mktmpdir do |tempdir|
@@ -15,7 +21,7 @@ class Packager
       end
     end
 
-    def self.create_package_for(item)
+    def create_package_for(item)
       source = 'empty'
       unless item.files.empty?
         source = 'dir'
@@ -45,11 +51,12 @@ class Packager
         cmd.concat(directories.sort)
       end
 
+      self.command.push(cmd)
+
       execute_command(cmd)
-      return cmd
     end
 
-    def self.execute_command(cmd)
+    def execute_command(cmd)
       #FileUtils.chdir('/tmp') do
         x = `#{cmd.join(' ')}`
         #system *cmd

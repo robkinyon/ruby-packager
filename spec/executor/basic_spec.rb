@@ -17,7 +17,15 @@ describe "Packager Executor" do
     Dir.mktmpdir do |tmpdir|
       FileUtils.chdir(tmpdir) do
         item = Packager::DSL::Package.new('foo', '0.0.1', 'dir', [])
-        Packager::Executor.execute_on([item])
+        executor = Packager::Executor.new
+        executor.execute_on([item])
+        expect(executor.command[0]).to eq([
+          'fpm',
+          '--name', 'foo',
+          '--version', '0.0.1',
+          '-s', 'empty',
+          '-t', 'dir',
+        ])
         expect(File).to exist('foo.dir')
       end
     end

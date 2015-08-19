@@ -22,8 +22,9 @@ describe "Packager packages" do
     expect(items[0].files).to eq([])
 
     FileUtils.chdir(workdir) do
-      rv = Packager::Executor.execute_on(items)
-      expect(rv[0]).to eq([
+      executor = Packager::Executor.new
+      executor.execute_on(items)
+      expect(executor.command[0]).to eq([
         'fpm',
         '--name', 'foo',
         '--version', '0.0.1',
@@ -67,8 +68,9 @@ describe "Packager packages" do
 
     # Stub out execute_command
     FileUtils.chdir(workdir) do
-      rv = Packager::Executor.execute_on(items)
-      expect(rv[0]).to eq([
+      executor = Packager::Executor.new
+      executor.execute_on(items)
+      expect(executor.command[0]).to eq([
         'fpm',
         '--name', 'foo',
         '--version', '0.0.1',
@@ -121,8 +123,9 @@ describe "Packager packages" do
     expect(items[0].files[1].dest).to eq("/bar/foo/file4")
 
     FileUtils.chdir(workdir) do
-      rv = Packager::Executor.execute_on(items)
-      expect(rv[0]).to eq([
+      executor = Packager::Executor.new
+      executor.execute_on(items)
+      expect(executor.command[0]).to eq([
         'fpm',
         '--name', 'foo',
         '--version', '0.0.1',
