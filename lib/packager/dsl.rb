@@ -23,16 +23,18 @@ class Packager::DSL < DSL::Maker
     ___get(attr)
   end
 
+  copy_file_dsl = generate_dsl({
+    :source => String,
+    :dest   => String,
+  }) do
+    Packager::Struct::File.new(source, dest)
+  end
+
   add_entrypoint(:package, {
     :name => String,
     :version => VersionString,
     :type => Any,
-    :files => ArrayOf[generate_dsl({
-      :source => String,
-      :dest   => String,
-    }) do
-      Packager::Struct::File.new(source, dest)
-    end],
+    :files => ArrayOf[copy_file_dsl],
     :file => AliasOf(:files),
   }) do |*args|
     type(Packager::DSL.default_type) unless type
