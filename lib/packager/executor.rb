@@ -4,9 +4,10 @@ require 'tmpdir'
 
 class Packager
   class Executor
-    attr_accessor :command
+    attr_accessor :command, :dryrun
 
-    def initialize
+    def initialize(opts={})
+      self.dryrun = !!opts[:dryrun]
       self.command = []
     end
 
@@ -57,6 +58,8 @@ class Packager
     end
 
     def execute_command(cmd)
+      return if dryrun
+
       #FileUtils.chdir('/tmp') do
         x = `#{cmd.join(' ')}`
         #system *cmd
