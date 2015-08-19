@@ -12,21 +12,18 @@
 
 require 'tmpdir'
 
-describe "Packager Executor" do
+describe Packager::Executor do
+  subject(:executor) { Packager::Executor.new(:dryrun => true) }
+
   it "creates an empty directory" do
-#    Dir.mktmpdir do |tmpdir|
-#      FileUtils.chdir(tmpdir) do
-        item = Packager::DSL::Package.new('foo', '0.0.1', 'dir', [])
-        executor = Packager::Executor.new(:dryrun => true)
-        executor.execute_on([item])
-        expect(executor.command[0]).to eq([
-          'fpm',
-          '--name', 'foo',
-          '--version', '0.0.1',
-          '-s', 'empty',
-          '-t', 'dir',
-        ])
-#      end
-#    end
+    item = Packager::Struct::Package.new('foo', '0.0.1', 'dir', [])
+    executor.execute_on([item])
+    expect(executor.command[0]).to eq([
+      'fpm',
+      '--name', 'foo',
+      '--version', '0.0.1',
+      '-s', 'empty',
+      '-t', 'dir',
+    ])
   end
 end

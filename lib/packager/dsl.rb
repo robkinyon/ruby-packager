@@ -1,6 +1,7 @@
-require "packager/version"
+require 'packager/version'
+require 'packager/struct'
 
-require "dsl/maker"
+require 'dsl/maker'
 
 class Packager::DSL < DSL::Maker
   class << self
@@ -10,14 +11,6 @@ class Packager::DSL < DSL::Maker
       @default_type
     end
   end
-
-  Package = Struct.new(
-    :name, :version, :type, :files,
-  )
-
-  File = Struct.new(
-    :source, :dest,
-  )
 
   add_type(VersionString = {}) do |attr, *args|
     unless args.empty?
@@ -38,19 +31,19 @@ class Packager::DSL < DSL::Maker
       :source => String,
       :dest   => String,
     }) do
-      File.new(source, dest)
+      Packager::Struct::File.new(source, dest)
     end],
     :file => AliasOf(:files),
   }) do |*args|
     type(Packager::DSL.default_type) unless type
     default(:name, args, 0)
 
-    Package.new(name, version, type, files)
+    Packager::Struct::Package.new(name, version, type, files)
   end
   add_verification(:package) do |item|
-    return "Every package must have a name" unless item.name
-    return "Every package must have a version" unless item.version
-    return "Every package must have a type" unless item.type
+    return 'Every package must have a name' unless item.name
+    return 'Every package must have a version' unless item.version
+    return 'Every package must have a type' unless item.type
     return
   end
 end
