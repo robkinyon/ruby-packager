@@ -20,7 +20,6 @@ describe Packager::Executor do
       :name => 'foo',
       :version => '0.0.1',
       :type => 'dir',
-      :files => [],
     )
     executor.execute_on([item])
     expect(executor.command[0]).to eq([

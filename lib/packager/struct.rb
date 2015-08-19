@@ -11,13 +11,19 @@ class Packager::Struct < Struct
     end
   end
 
-  Package = Packager::Struct.new(
+  class Package < Packager::Struct.new(
     :name, :version, :type, :files,
   )
+    def initialize(*args)
+      super(*args)
+      self.files ||= []
+    end
+  end
 
-  File = Packager::Struct.new(
+  class File < Packager::Struct.new(
     :source, :dest,
   )
+  end
 
 end
 
