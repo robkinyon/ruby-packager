@@ -22,12 +22,13 @@ describe Packager::Executor do
       :type => 'dir',
     )
     executor.execute_on([item])
-    expect(executor.command[0]).to eq([
-      'fpm',
-      '--name', 'foo',
-      '--version', '0.0.1',
-      '-s', 'empty',
-      '-t', 'dir',
-    ])
+    expect(executor.commands[0]).to eq(
+      Packager::Struct::Command.new({
+        :name => 'foo',
+        :version => '0.0.1',
+        :source => 'empty',
+        :target => 'dir',
+      })
+    )
   end
 end

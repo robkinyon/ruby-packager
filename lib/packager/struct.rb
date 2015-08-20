@@ -25,5 +25,32 @@ class Packager::Struct < Struct
   )
   end
 
+  class Command < Packager::Struct.new(
+    :executable, :name, :version,
+    :source, :target, :directories,
+  )
+    def initialize(*args)
+      super(*args)
+      self.executable ||= 'fpm'
+      self.directories ||= {}
+    end
+
+    def add_directory(*items)
+      items.each do |item|
+        directories[item] = true
+      end
+    end
+
+    def to_system
+      [
+        executable,
+        '--name', name,
+        '--version', version,
+        '-s', source,
+        '-t', target,
+        *directories.keys,
+      ]
+    end
+  end
 end
 

@@ -4,11 +4,11 @@ require 'tmpdir'
 
 class Packager
   class Executor
-    attr_accessor :command, :dryrun
+    attr_accessor :commands, :dryrun
 
     def initialize(opts={})
       self.dryrun = !!opts[:dryrun]
-      self.command = []
+      self.commands = []
     end
 
     def execute_on(items)
@@ -33,26 +33,23 @@ class Packager
         end
       end
 
-      cmd = [
-        'fpm',
-        '--name', item.name,
-        '--version', item.version,
-        '-s', source,
-        '-t', item.type,
-      ].flatten
+      cmd = Packager::Struct::Command.new(
+        :name    => item.name,
+        :version => item.version,
+        :source  => source,
+        :target  => item.type,
+      )
 
       if source == 'dir'
         directories = []
         Dir.glob('*') do |entry|
           if File.directory?(entry)
-            directories << entry
+            cmd.add_directory(entry)
           end
         end
-        # Sort the directories being added to make it easier to test
-        cmd.concat(directories.sort)
       end
 
-      self.command.push(cmd)
+      commands.push(cmd)
 
       execute_command(cmd)
     end
@@ -61,7 +58,7 @@ class Packager
       return if dryrun
 
       #FileUtils.chdir('/tmp') do
-        x = `#{cmd.join(' ')}`
+        x = `#{cmd.to_system.join(' ')}`
         #system *cmd
         raise x if x.match(/:error/)
       #end

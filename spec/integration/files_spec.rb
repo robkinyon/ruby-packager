@@ -25,13 +25,14 @@ describe "Packager packages" do
     FileUtils.chdir(workdir) do
       executor = Packager::Executor.new
       executor.execute_on(items)
-      expect(executor.command[0]).to eq([
-        'fpm',
-        '--name', 'foo',
-        '--version', '0.0.1',
-        '-s', 'empty',
-        '-t', 'dir',
-      ])
+      expect(executor.commands[0]).to eq(
+        Packager::Struct::Command.new({
+          :name => 'foo',
+          :version => '0.0.1',
+          :source => 'empty',
+          :target => 'dir',
+        })
+      )
 
       expect(File).to exist('foo.dir')
       expect(Dir['foo.dir/*'].empty?).to be(true)
@@ -62,14 +63,15 @@ describe "Packager packages" do
     FileUtils.chdir(workdir) do
       executor = Packager::Executor.new
       executor.execute_on(items)
-      expect(executor.command[0]).to eq([
-        'fpm',
-        '--name', 'foo',
-        '--version', '0.0.1',
-        '-s', 'dir',
-        '-t', 'dir',
-        'foo'
-      ])
+      expect(executor.commands[0]).to eq(
+        Packager::Struct::Command.new({
+          :name => 'foo',
+          :version => '0.0.1',
+          :source => 'dir',
+          :target => 'dir',
+          :directories => { 'foo' => true },
+        })
+      )
 
       expect(File).to exist('foo.dir')
       expect(File).to exist('foo.dir/foo/bar/file2')
@@ -105,14 +107,15 @@ describe "Packager packages" do
     FileUtils.chdir(workdir) do
       executor = Packager::Executor.new
       executor.execute_on(items)
-      expect(executor.command[0]).to eq([
-        'fpm',
-        '--name', 'foo',
-        '--version', '0.0.1',
-        '-s', 'dir',
-        '-t', 'dir',
-        'bar', 'foo'
-      ])
+      expect(executor.commands[0]).to eq(
+        Packager::Struct::Command.new({
+          :name => 'foo',
+          :version => '0.0.1',
+          :source => 'dir',
+          :target => 'dir',
+          :directories => { 'foo' => true, 'bar' => true },
+        })
+      )
 
       expect(File).to exist('foo.dir')
       expect(File).to exist('foo.dir/foo/bar/file2')
