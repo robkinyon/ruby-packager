@@ -2,8 +2,16 @@ require 'fileutils'
 require 'tmpdir'
 
 describe "Packager packages" do
-  before(:all) { Packager::DSL.default_type('dir') }
+  before(:all) { Packager::DSL.default_type('test') }
   after(:all) { Packager::DSL.default_type = nil }
+
+  before(:all) {
+    dir = `pwd`.chomp
+    Packager::Struct::Command.default_executable = "ruby -I#{File.join(dir,'spec/lib')} -rfpm/package/test `which fpm`"
+  }
+  after(:all) {
+    Packager::Struct::Command.default_executable = 'fpm'
+  }
 
   let(:sourcedir) { Dir.mktmpdir }
   let(:workdir)   { Dir.mktmpdir }
@@ -24,18 +32,23 @@ describe "Packager packages" do
 
     FileUtils.chdir(workdir) do
       executor = Packager::Executor.new
-      executor.execute_on(items)
+      capture(:stdout) { executor.execute_on(items) }
       expect(executor.commands[0]).to eq(
         Packager::Struct::Command.new({
           :name => 'foo',
           :version => '0.0.1',
           :source => 'empty',
-          :target => 'dir',
+          :target => 'test',
         })
       )
 
-      expect(File).to exist('foo.dir')
-      expect(Dir['foo.dir/*'].empty?).to be(true)
+      expect(File).to exist('foo.test')
+      expect(File).to exist('foo.test/META.json')
+      expect(JSON.parse(IO.read('foo.test/META.json'))).to eq({
+        'name' => 'foo',
+        'version' => '0.0.1',
+      })
+      expect(Dir['foo.test/contents/*'].empty?).to be(true)
     end
   end
 
@@ -62,19 +75,24 @@ describe "Packager packages" do
     # Stub out execute_command
     FileUtils.chdir(workdir) do
       executor = Packager::Executor.new
-      executor.execute_on(items)
+      capture(:stdout) { executor.execute_on(items) }
       expect(executor.commands[0]).to eq(
         Packager::Struct::Command.new({
           :name => 'foo',
           :version => '0.0.1',
           :source => 'dir',
-          :target => 'dir',
+          :target => 'test',
           :directories => { 'foo' => true },
         })
       )
 
-      expect(File).to exist('foo.dir')
-      expect(File).to exist('foo.dir/foo/bar/file2')
+      expect(File).to exist('foo.test')
+      expect(File).to exist('foo.test/META.json')
+      expect(JSON.parse(IO.read('foo.test/META.json'))).to eq({
+        'name' => 'foo',
+        'version' => '0.0.1',
+      })
+      expect(File).to exist('foo.test/contents/foo/bar/file2')
     end
   end
 
@@ -106,20 +124,25 @@ describe "Packager packages" do
 
     FileUtils.chdir(workdir) do
       executor = Packager::Executor.new
-      executor.execute_on(items)
+      capture(:stdout) { executor.execute_on(items) }
       expect(executor.commands[0]).to eq(
         Packager::Struct::Command.new({
           :name => 'foo',
           :version => '0.0.1',
           :source => 'dir',
-          :target => 'dir',
+          :target => 'test',
           :directories => { 'foo' => true, 'bar' => true },
         })
       )
 
-      expect(File).to exist('foo.dir')
-      expect(File).to exist('foo.dir/foo/bar/file2')
-      expect(File).to exist('foo.dir/bar/foo/file4')
+      expect(File).to exist('foo.test')
+      expect(File).to exist('foo.test/META.json')
+      expect(JSON.parse(IO.read('foo.test/META.json'))).to eq({
+        'name' => 'foo',
+        'version' => '0.0.1',
+      })
+      expect(File).to exist('foo.test/contents/foo/bar/file2')
+      expect(File).to exist('foo.test/contents/bar/foo/file4')
     end
   end
 end

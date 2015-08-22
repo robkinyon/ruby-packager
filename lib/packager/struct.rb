@@ -29,9 +29,13 @@ class Packager::Struct < Struct
     :executable, :name, :version,
     :source, :target, :directories,
   )
+    class << self
+      attr_accessor :default_executable
+    end
+
     def initialize(*args)
       super(*args)
-      self.executable ||= 'fpm'
+      self.executable ||= self.class.default_executable || 'fpm'
       self.directories ||= {}
     end
 

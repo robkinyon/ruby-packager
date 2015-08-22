@@ -58,7 +58,7 @@ class Packager
       return if dryrun
 
       #FileUtils.chdir('/tmp') do
-        x = `#{cmd.to_system.join(' ')}`
+        x = `#{cmd.to_system.join(' ')} 2>/dev/null`
         #system *cmd
         rv = eval(x)
         raise x if rv[:error]
