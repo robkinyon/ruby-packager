@@ -60,7 +60,9 @@ class Packager
       #FileUtils.chdir('/tmp') do
         x = `#{cmd.to_system.join(' ')}`
         #system *cmd
-        raise x if x.match(/:error/)
+        rv = eval(x)
+        raise x if rv[:error]
+        return rv[:path]
       #end
     end
   end

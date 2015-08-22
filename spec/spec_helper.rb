@@ -46,10 +46,12 @@ def capture(stream)
   result
 end
 
+require 'packager/cli'
+require 'tempfile'
 def append_to_file(file, content)
-  f = File.new(file, 'a+')
-  f.write(content)
-  f.flush # VERY IMPORTANT
-  f.close
+  File.open(file, 'a+') do |f|
+    f.write(content)
+    f.flush # VERY IMPORTANT
+  end
 end
 
