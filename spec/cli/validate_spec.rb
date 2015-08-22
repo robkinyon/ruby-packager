@@ -33,51 +33,50 @@ describe Packager::CLI do
       }.to raise_error(Thor::Error, "'#{definition}' has the following errors:\nEvery package must have a name")
     end
 
-    it "handles a file that works" do
-      contents = "
-        package {
-          name 'foo'
-          version '0.0.1'
-          type 'dir'
-        }
-      "
-      append_to_file(definition, contents)
+    context "handles a file that works" do
+      before {
+        expect(Packager::DSL).to(
+          receive(:parse_dsl).
+          with('contents').
+          and_return(:stuff)
+        )
 
-      expect(Packager::DSL).to(
-        receive(:parse_dsl).
-        with(contents).
-        and_return(:stuff)
-      )
+        expect_any_instance_of(Packager::Executor).to(
+          receive(:execute_on).
+          with(:stuff).
+          and_return(['foo'])
+        )
+      }
 
-      expect_any_instance_of(Packager::Executor).to(
-        receive(:execute_on).
-        with(:stuff).
-        and_return(['foo'])
-      )
-
-      expect(
-        capture(:stdout) { cli.create(definition) }
-      ).to eq("'#{definition}' created foo\n")
+      it {
+        append_to_file(definition, 'contents')
+        expect(
+          capture(:stdout) { cli.create(definition) }
+        ).to eq("'#{definition}' created foo\n")
+      }
     end
 
-    it "handles a file that works with two packages" do
-      append_to_file(definition, 'contents')
+    context "handles a file that works with two packages" do
+      before {
+        expect(Packager::DSL).to(
+          receive(:parse_dsl).
+          with('contents').
+          and_return(:stuff)
+        )
 
-      expect(Packager::DSL).to(
-        receive(:parse_dsl).
-        with('contents').
-        and_return(:stuff)
-      )
+        expect_any_instance_of(Packager::Executor).to(
+          receive(:execute_on).
+          with(:stuff).
+          and_return(['foo', 'bar'])
+        )
+      }
 
-      expect_any_instance_of(Packager::Executor).to(
-        receive(:execute_on).
-        with(:stuff).
-        and_return(['foo', 'bar'])
-      )
-
-      expect(
-        capture(:stdout) { cli.create(definition) }
-      ).to eq("'#{definition}' created foo, bar\n")
+      it {
+        append_to_file(definition, 'contents')
+        expect(
+          capture(:stdout) { cli.create(definition) }
+        ).to eq("'#{definition}' created foo, bar\n")
+      }
     end
   end
 
