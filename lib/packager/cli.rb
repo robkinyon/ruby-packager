@@ -10,10 +10,18 @@ class Packager::CLI < Thor
   end
   # :nocov:
 
-  desc :create, "Create a package"
-  def create(*args)
+  # Taken from http://stackoverflow.com/a/27804972/1732954
+  map %w[--version] => :__print_version
+  desc "--version", "Print the version"
+  def __print_version
+    puts Packager::VERSION
+  end
+
+  desc :execute, "Execute one or more package DSL definition(s)"
+  default_task :execute
+  def execute(*args)
     if args.empty?
-      raise Thor::Error, "No filenames provided for create"
+      raise Thor::Error, "No filenames provided for execute"
     end
 
     args.each do |filename|
@@ -33,11 +41,11 @@ class Packager::CLI < Thor
 
       packages = Packager::Executor.new.execute_on(items)
 
-      puts "'#{filename}' created #{packages.join(', ')}"
+      puts "'#{filename}' executed #{packages.join(', ')}"
     end
   end
 
-  desc :validate, "Validate a package DSL definition"
+  desc :validate, "Validate one or more package DSL definition(s)"
   def validate(*args)
     if args.empty?
       raise Thor::Error, "No filenames provided for validate"
@@ -61,6 +69,4 @@ class Packager::CLI < Thor
       puts "'#{filename}' parses cleanly"
     end
   end
-
-  default_task :create
 end
