@@ -4,6 +4,8 @@
 # * dependencies
 # * before/after scripts
 
+# TODO: This needs to be agnostic of Packager::Struct::Command.
+
 require 'fileutils'
 require 'tmpdir'
 
