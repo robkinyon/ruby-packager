@@ -1,3 +1,10 @@
+# Because of the vagaries of producing OS-specific packages on varying platforms,
+# we will test command execution using a new output target for FPM called 'test.
+# This target is based on the 'dir' target and exists in spec/lib.
+#
+# Note: We assume that fpm produces good packages of other types, given a correct
+# invocations.
+
 require 'fileutils'
 require 'tmpdir'
 
@@ -5,6 +12,7 @@ describe "Packager packages" do
   before(:all) { Packager::DSL.default_type('test') }
   after(:all) { Packager::DSL.default_type = nil }
 
+  # This is to get access to the 'test' FPM type in the FPM executable.
   before(:all) {
     dir = `pwd`.chomp
     Packager::Struct::Command.default_executable = "ruby -I#{File.join(dir,'spec/lib')} -rfpm/package/test `which fpm`"
@@ -15,11 +23,12 @@ describe "Packager packages" do
 
   let(:sourcedir) { Dir.mktmpdir }
   let(:workdir)   { Dir.mktmpdir }
-  # Needed to clean up because doing the let() doesn't trigger the automatic
-  # removal using the block form would do.
+  # Need to clean up because doing the let() doesn't trigger the automatic
+  # removal using the block form of Dir.mktmpdir would do.
   after(:each) {
-    FileUtils.remove_entry_secure(sourcedir)
-    FileUtils.remove_entry_secure(workdir)
+    [sourcedir, workdir].each do |dir|
+      FileUtils.remove_entry_secure(dir)
+    end
   }
 
   it "can create a package with no files" do

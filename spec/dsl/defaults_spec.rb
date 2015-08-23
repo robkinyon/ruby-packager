@@ -4,7 +4,7 @@ describe Packager::DSL do
   end
 
   context "default type" do
-    before(:all) { Packager::DSL.default_type('dir') }
+    before(:all) { Packager::DSL.default_type('unknown') }
     after(:all) { Packager::DSL.default_type = nil }
 
     it "will use the default type" do
@@ -14,7 +14,7 @@ describe Packager::DSL do
           version '0.0.1'
         }
       }
-      expect(items[0].type).to eq('dir')
+      expect(items[0].type).to eq('unknown')
     end
   end
 end
