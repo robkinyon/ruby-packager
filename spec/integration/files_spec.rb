@@ -53,13 +53,17 @@ describe "Packager integration" do
     end
   end
 
+  before(:each) { $sourcedir = sourcedir }
+  before(:all) {
+    Packager::DSL.add_helper(:sourcedir) do |path|
+      File.join($sourcedir, path)
+    end
+  }
+
   it "can create a package with one file" do
     FileUtils.chdir(sourcedir) do
       FileUtils.touch('file1')
     end
-
-    # This is a wart.
-    $sourcedir = sourcedir
 
     append_to_file('definition', "
       package {
@@ -67,7 +71,7 @@ describe "Packager integration" do
         version '0.0.1'
 
         file {
-          source '#{File.join($sourcedir, 'file1')}'
+          source sourcedir('file1')
           dest '/foo/bar/file2'
         }
       }
@@ -94,21 +98,18 @@ describe "Packager integration" do
       append_to_file('file3', 'stuff')
     end
 
-    # This is a wart.
-    $sourcedir = sourcedir
-
     append_to_file('definition', "
       package {
         name 'foo'
         version '0.0.1'
 
         file {
-          source '#{File.join($sourcedir, 'file1')}'
+          source sourcedir('file1')
           dest '/foo/bar/file2'
         }
 
         file {
-          source '#{File.join($sourcedir, 'file3')}'
+          source sourcedir('file3')
           dest '/bar/foo/file4'
         }
       }
