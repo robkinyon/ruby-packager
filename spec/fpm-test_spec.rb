@@ -4,50 +4,44 @@
 # * dependencies
 # * before/after scripts
 
-# TODO: This needs to be agnostic of Packager::Struct::Command.
-
 require 'fileutils'
 require 'tmpdir'
 
 describe 'FPM::Package::Test' do
   # This is to get access to the 'test' FPM type in the FPM executable.
   before(:all) {
-    dir = `pwd`.chomp
-    Packager::Struct::Command.default_executable = "ruby -I#{File.join(dir,'spec/lib')} -rfpm/package/test `which fpm`"
-  }
-  after(:all) {
-    Packager::Struct::Command.default_executable = 'fpm'
+    @dir = `pwd`.chomp
+    @includedir = File.join(@dir,'spec/lib')
   }
 
+  # Do all of our work within a temp directory
   let(:tempdir) { Dir.mktmpdir }
+  before(:each) { Dir.chdir tempdir }
   after(:each) {
+    Dir.chdir @dir
     FileUtils.remove_entry_secure tempdir
   }
 
   # FIXME: 2>/dev/null is to suppress a Bundler complaint about JSON.
   def execute(cmd)
-    return eval `#{cmd.to_system.join(' ')} 2>/dev/null`
+    cmd.unshift "ruby -I#{@includedir} -rfpm/package/test `which fpm`"
+    return eval `#{cmd.join(' ')} 2>/dev/null`
   end
 
   it "builds a directory" do
-    dir = `pwd`.chomp
-    cmd = Packager::Struct::Command.new(
-      :name => 'foo',
-      :version => '0.0.1',
-      :source => 'empty',
-      :target => 'test',
-    )
+    execute([
+      '--name foo',
+      '--version 0.0.1',
+      '-s empty',
+      '-t test',
+    ])
 
-    Dir.chdir(tempdir) do
-      execute(cmd)
-
-      expect(File).to exist('foo.test')
-      expect(File).to exist('foo.test/META.json')
-      expect(JSON.parse(IO.read('foo.test/META.json'))).to eq({
-        'name' => 'foo',
-        'version' => '0.0.1',
-      })
-      expect(Dir['foo.test/contents/*'].empty?).to be(true)
-    end
+    expect(File).to exist('foo.test')
+    expect(File).to exist('foo.test/META.json')
+    expect(JSON.parse(IO.read('foo.test/META.json'))).to eq({
+      'name' => 'foo',
+      'version' => '0.0.1',
+    })
+    expect(Dir['foo.test/contents/*'].empty?).to be(true)
   end
 end
