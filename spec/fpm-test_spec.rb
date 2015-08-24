@@ -22,7 +22,9 @@ describe 'FPM::Package::Test' do
     FileUtils.remove_entry_secure tempdir
   }
 
-  # FIXME: 2>/dev/null is to suppress a Bundler complaint about JSON.
+  # FIXME: 2>/dev/null is to suppress a Gem::Specification complaint about JSON.
+  # After 'bundle install', Ruby 2.2 has JSON 1.8.3 and 1.8.1 (default) installed
+  # and something gets confused because both are sufficient for JSON >= 1.7.7
   def execute(cmd)
     cmd.unshift "ruby -I#{@includedir} -rfpm/package/test `which fpm`"
     return eval `#{cmd.join(' ')} 2>/dev/null`
