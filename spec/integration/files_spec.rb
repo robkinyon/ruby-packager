@@ -21,6 +21,7 @@ describe "Packager packages" do
     Packager::Struct::Command.default_executable = 'fpm'
   }
 
+  let(:definition) { Tempfile.new('foo').path }
   let(:sourcedir) { Dir.mktmpdir }
   let(:workdir)   { Dir.mktmpdir }
   # Need to clean up because doing the let() doesn't trigger the automatic
@@ -32,23 +33,17 @@ describe "Packager packages" do
   }
 
   it "can create a package with no files" do
-    items = Packager::DSL.execute_dsl {
-      package {
-        name 'foo'
-        version '0.0.1'
-      }
-    }
-
     FileUtils.chdir(workdir) do
-      executor = Packager::Executor.new
-      capture(:stdout) { executor.execute_on(items) }
-      expect(executor.commands[0]).to eq(
-        Packager::Struct::Command.new({
-          :name => 'foo',
-          :version => '0.0.1',
-          :target => 'test',
-        })
-      )
+      append_to_file(definition, "
+        package {
+          name 'foo'
+          version '0.0.1'
+        }
+      ")
+
+      capture(:stdout) {
+        Packager::CLI.start(['execute', definition])
+      }
 
       expect(File).to exist('foo.test')
       expect(File).to exist('foo.test/META.json')
@@ -69,31 +64,23 @@ describe "Packager packages" do
     # This is a wart.
     $sourcedir = sourcedir
 
-    items = Packager::DSL.execute_dsl {
+    append_to_file(definition, "
       package {
         name 'foo'
         version '0.0.1'
 
         file {
-          source File.join($sourcedir, 'file1')
-          dest "/foo/bar/file2"
+          source '#{File.join($sourcedir, 'file1')}'
+          dest '/foo/bar/file2'
         }
       }
-    }
+    ")
 
     # Stub out execute_command
     FileUtils.chdir(workdir) do
-      executor = Packager::Executor.new
-      capture(:stdout) { executor.execute_on(items) }
-      expect(executor.commands[0]).to eq(
-        Packager::Struct::Command.new({
-          :name => 'foo',
-          :version => '0.0.1',
-          :source => 'dir',
-          :target => 'test',
-          :directories => { 'foo' => true },
-        })
-      )
+      capture(:stdout) {
+        Packager::CLI.start(['execute', definition])
+      }
 
       expect(File).to exist('foo.test')
       expect(File).to exist('foo.test/META.json')
@@ -115,35 +102,27 @@ describe "Packager packages" do
     # This is a wart.
     $sourcedir = sourcedir
 
-    items = Packager::DSL.execute_dsl {
+    append_to_file(definition, "
       package {
         name 'foo'
         version '0.0.1'
 
         file {
-          source File.join($sourcedir, 'file1')
-          dest "/foo/bar/file2"
+          source '#{File.join($sourcedir, 'file1')}'
+          dest '/foo/bar/file2'
         }
 
         file {
-          source File.join($sourcedir, 'file3')
-          dest "/bar/foo/file4"
+          source '#{File.join($sourcedir, 'file3')}'
+          dest '/bar/foo/file4'
         }
       }
-    }
+    ")
 
     FileUtils.chdir(workdir) do
-      executor = Packager::Executor.new
-      capture(:stdout) { executor.execute_on(items) }
-      expect(executor.commands[0]).to eq(
-        Packager::Struct::Command.new({
-          :name => 'foo',
-          :version => '0.0.1',
-          :source => 'dir',
-          :target => 'test',
-          :directories => { 'foo' => true, 'bar' => true },
-        })
-      )
+      capture(:stdout) {
+        Packager::CLI.start(['execute', definition])
+      }
 
       expect(File).to exist('foo.test')
       expect(File).to exist('foo.test/META.json')
