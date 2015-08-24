@@ -35,11 +35,13 @@ class Packager::Struct < Struct
 
     def initialize(*args)
       super(*args)
+      self.source ||= 'empty'
       self.executable ||= self.class.default_executable || 'fpm'
       self.directories ||= {}
     end
 
     def add_directory(*items)
+      self.source = 'dir'
       items.each do |item|
         directories[item] = true
       end

@@ -12,20 +12,19 @@ class Packager
     end
 
     def execute_on(items)
-      #curdir = Dir.pwd
+      curdir = Dir.pwd
       items.collect do |item|
-        #Dir.mktmpdir do |tempdir|
-        #  Dir.chdir(tempdir) do
-            create_package_for(item)
-        #  end
-        #end
+        Dir.mktmpdir do |tempdir|
+          Dir.chdir(tempdir) do
+            path = create_package_for(item)
+            FileUtils.mv(path, curdir) if path
+          end
+        end
       end
     end
 
     def create_package_for(item)
-      source = 'empty'
       unless item.files.empty?
-        source = 'dir'
         item.files.each do |file|
           dest = (file.dest || '').gsub /^\//, ''
           FileUtils.mkdir_p File.dirname(dest)
@@ -36,16 +35,13 @@ class Packager
       cmd = Packager::Struct::Command.new(
         :name    => item.name,
         :version => item.version,
-        :source  => source,
+        #:source  => source,
         :target  => item.type,
       )
 
-      if source == 'dir'
-        directories = []
-        Dir.glob('*') do |entry|
-          if File.directory?(entry)
-            cmd.add_directory(entry)
-          end
+      Dir.glob('*') do |entry|
+        if File.directory?(entry)
+          cmd.add_directory(entry)
         end
       end
 
@@ -57,13 +53,11 @@ class Packager
     def execute_command(cmd)
       return if dryrun
 
-      #FileUtils.chdir('/tmp') do
-        x = `#{cmd.to_system.join(' ')} 2>/dev/null`
-        #system *cmd
-        rv = eval(x)
-        raise x if rv[:error]
-        return rv[:path]
-      #end
+      x = `#{cmd.to_system.join(' ')} 2>/dev/null`
+      #system *cmd
+      rv = eval(x)
+      raise rv[:error] if rv[:error]
+      return rv[:path]
     end
   end
 end

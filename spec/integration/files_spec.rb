@@ -46,7 +46,6 @@ describe "Packager packages" do
         Packager::Struct::Command.new({
           :name => 'foo',
           :version => '0.0.1',
-          :source => 'empty',
           :target => 'test',
         })
       )
