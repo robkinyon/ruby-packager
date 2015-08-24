@@ -59,7 +59,9 @@ end
 def verify_test_package(name, metadata={}, files={})
   expect(File).to exist(name)
   expect(File).to exist(File.join(name, 'META.json'))
-  expect(JSON.parse(IO.read(File.join(name, 'META.json')))).to eq(metadata)
+  expect(JSON.parse(IO.read(File.join(name, 'META.json')))).to eq({
+    'requires' => [],
+  }.merge(metadata))
   if files.empty?
     expect(Dir[File.join(name, 'contents/*')].empty?).to be(true)
   else
@@ -77,4 +79,3 @@ def verify_test_package(name, metadata={}, files={})
     expect(file_expectations).to be_empty
   end
 end
-

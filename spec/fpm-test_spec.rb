@@ -44,7 +44,6 @@ describe 'FPM::Package::Test' do
     verify_test_package('foo.test', {
       'name' => 'foo',
       'version' => '0.0.1',
-      'requires' => [],
     })
   end
 
@@ -79,7 +78,6 @@ describe 'FPM::Package::Test' do
     verify_test_package('foo.test', {
       'name' => 'foo',
       'version' => '0.0.1',
-      'requires' => [],
     }, {
       'foo' => 'stuff',
     })

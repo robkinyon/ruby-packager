@@ -48,7 +48,6 @@ describe "Packager integration" do
       verify_test_package('foo.test', {
         'name' => 'foo',
         'version' => '0.0.1',
-        'requires' => [],
       })
     end
   end
@@ -82,7 +81,6 @@ describe "Packager integration" do
       verify_test_package('foo.test', {
         'name' => 'foo',
         'version' => '0.0.1',
-        'requires' => [],
       }, {
         'foo/bar/file2' => '',
       })
@@ -123,7 +121,6 @@ describe "Packager integration" do
       verify_test_package('foo.test', {
         'name' => 'foo',
         'version' => '0.0.1',
-        'requires' => [],
       }, {
         'foo/bar/file2' => '',
         'bar/foo/file4' => 'stuff',
