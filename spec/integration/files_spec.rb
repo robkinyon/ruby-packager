@@ -56,6 +56,7 @@ describe "Packager packages" do
       expect(JSON.parse(IO.read('foo.test/META.json'))).to eq({
         'name' => 'foo',
         'version' => '0.0.1',
+        'requires' => [],
       })
       expect(Dir['foo.test/contents/*'].empty?).to be(true)
     end
@@ -100,6 +101,7 @@ describe "Packager packages" do
       expect(JSON.parse(IO.read('foo.test/META.json'))).to eq({
         'name' => 'foo',
         'version' => '0.0.1',
+        'requires' => [],
       })
       expect(File).to exist('foo.test/contents/foo/bar/file2')
     end
@@ -149,6 +151,7 @@ describe "Packager packages" do
       expect(JSON.parse(IO.read('foo.test/META.json'))).to eq({
         'name' => 'foo',
         'version' => '0.0.1',
+        'requires' => [],
       })
       expect(File).to exist('foo.test/contents/foo/bar/file2')
       expect(File).to exist('foo.test/contents/bar/foo/file4')
