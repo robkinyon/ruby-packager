@@ -19,6 +19,7 @@ class FPM::Package::Test < FPM::Package::Dir
       f.write({
         :name => name,
         :version => version,
+        :requires => dependencies.sort,
       }.to_json)
     end
   end
