@@ -5,12 +5,13 @@
 # * before/after scripts
 
 require 'fileutils'
+require 'tempfile'
 require 'tmpdir'
 
 describe 'FPM::Package::Test' do
   # This is to get access to the 'test' FPM type in the FPM executable.
   before(:all) {
-    @dir = `pwd`.chomp
+    @dir = Dir.pwd
     @includedir = File.join(@dir,'spec/lib')
   }
 
@@ -32,17 +33,6 @@ describe 'FPM::Package::Test' do
     return eval `#{cmd.join(' ')}`# 
   end
 
-  def verify(name, metadata={}, contents={})
-    expect(File).to exist(name)
-    expect(File).to exist(File.join(name, 'META.json'))
-    expect(JSON.parse(IO.read(File.join(name, 'META.json')))).to eq(metadata)
-    if contents.empty?
-      expect(Dir[File.join(name, 'contents/*')].empty?).to be(true)
-    else
-      expect(true).to be(false)
-    end
-  end
-
   it "creates an empty package" do
     execute([
       '--name foo',
@@ -51,7 +41,7 @@ describe 'FPM::Package::Test' do
       '-t test',
     ])
 
-    verify('foo.test', {
+    verify_test_package('foo.test', {
       'name' => 'foo',
       'version' => '0.0.1',
       'requires' => [],
@@ -68,10 +58,30 @@ describe 'FPM::Package::Test' do
       '-t test',
     ])
 
-    verify('foo.test', {
+    verify_test_package('foo.test', {
       'name' => 'foo',
       'version' => '0.0.2',
       'requires' => [ 'bar', 'baz' ],
+    })
+  end
+
+  it "creates a package with files" do
+    append_to_file('foo', 'stuff')
+
+    execute([
+      '--name foo',
+      '--version 0.0.1',
+      '-s dir',
+      '-t test',
+      'foo'
+    ])
+
+    verify_test_package('foo.test', {
+      'name' => 'foo',
+      'version' => '0.0.1',
+      'requires' => [],
+    }, {
+      'foo' => 'stuff',
     })
   end
 end

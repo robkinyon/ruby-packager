@@ -8,7 +8,7 @@
 require 'fileutils'
 require 'tmpdir'
 
-describe "Packager packages" do
+describe "Packager integration" do
   before(:all) { Packager::DSL.default_type('test') }
   after(:all) { Packager::DSL.default_type = nil }
 
@@ -45,14 +45,11 @@ describe "Packager packages" do
         Packager::CLI.start(['execute', definition])
       }
 
-      expect(File).to exist('foo.test')
-      expect(File).to exist('foo.test/META.json')
-      expect(JSON.parse(IO.read('foo.test/META.json'))).to eq({
+      verify_test_package('foo.test', {
         'name' => 'foo',
         'version' => '0.0.1',
         'requires' => [],
       })
-      expect(Dir['foo.test/contents/*'].empty?).to be(true)
     end
   end
 
@@ -82,21 +79,20 @@ describe "Packager packages" do
         Packager::CLI.start(['execute', definition])
       }
 
-      expect(File).to exist('foo.test')
-      expect(File).to exist('foo.test/META.json')
-      expect(JSON.parse(IO.read('foo.test/META.json'))).to eq({
+      verify_test_package('foo.test', {
         'name' => 'foo',
         'version' => '0.0.1',
         'requires' => [],
+      }, {
+        'foo/bar/file2' => '',
       })
-      expect(File).to exist('foo.test/contents/foo/bar/file2')
     end
   end
 
   it "can create a package with two file" do
     FileUtils.chdir(sourcedir) do
       FileUtils.touch('file1')
-      FileUtils.touch('file3')
+      append_to_file('file3', 'stuff')
     end
 
     # This is a wart.
@@ -124,15 +120,14 @@ describe "Packager packages" do
         Packager::CLI.start(['execute', definition])
       }
 
-      expect(File).to exist('foo.test')
-      expect(File).to exist('foo.test/META.json')
-      expect(JSON.parse(IO.read('foo.test/META.json'))).to eq({
+      verify_test_package('foo.test', {
         'name' => 'foo',
         'version' => '0.0.1',
         'requires' => [],
+      }, {
+        'foo/bar/file2' => '',
+        'bar/foo/file4' => 'stuff',
       })
-      expect(File).to exist('foo.test/contents/foo/bar/file2')
-      expect(File).to exist('foo.test/contents/bar/foo/file4')
     end
   end
 end
