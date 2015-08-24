@@ -12,6 +12,10 @@ task :default => [:spec]
 # Use default rspec rake task
 RSpec::Core::RakeTask.new
 
+task :unitspec do
+  sh('rspec', *Dir.glob('spec/{cli,dsl,executor}'))
+end
+
 # Configure `rake clobber` to delete all generated files
 CLOBBER.include('pkg', 'doc', 'coverage', '*.gem')
 
