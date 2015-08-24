@@ -14,35 +14,36 @@ describe "Packager integration" do
 
   # This is to get access to the 'test' FPM type in the FPM executable.
   before(:all) {
-    dir = `pwd`.chomp
-    Packager::Struct::Command.default_executable = "ruby -I#{File.join(dir,'spec/lib')} -rfpm/package/test `which fpm`"
+    @dir = Dir.pwd
+    Packager::Struct::Command.default_executable = "ruby -I#{File.join(@dir,'spec/lib')} -rfpm/package/test `which fpm`"
   }
   after(:all) {
     Packager::Struct::Command.default_executable = 'fpm'
   }
 
-  let(:definition) { Tempfile.new('foo').path }
-  let(:sourcedir) { Dir.mktmpdir }
-  let(:workdir)   { Dir.mktmpdir }
   # Need to clean up because doing the let() doesn't trigger the automatic
   # removal using the block form of Dir.mktmpdir would do.
-  after(:each) {
+  let(:sourcedir) { Dir.mktmpdir }
+  let(:workdir)   { Dir.mktmpdir }
+  before(:each) { FileUtils.chdir(workdir) }
+  after(:each)  {
+    FileUtils.chdir @dir
     [sourcedir, workdir].each do |dir|
       FileUtils.remove_entry_secure(dir)
     end
   }
 
   it "can create a package with no files" do
-    FileUtils.chdir(workdir) do
-      append_to_file(definition, "
-        package {
-          name 'foo'
-          version '0.0.1'
-        }
-      ")
+    append_to_file('definition', "
+      package {
+        name 'foo'
+        version '0.0.1'
+      }
+    ")
 
+    FileUtils.chdir(workdir) do
       capture(:stdout) {
-        Packager::CLI.start(['execute', definition])
+        Packager::CLI.start(['execute', './definition'])
       }
 
       verify_test_package('foo.test', {
@@ -60,7 +61,7 @@ describe "Packager integration" do
     # This is a wart.
     $sourcedir = sourcedir
 
-    append_to_file(definition, "
+    append_to_file('definition', "
       package {
         name 'foo'
         version '0.0.1'
@@ -75,7 +76,7 @@ describe "Packager integration" do
     # Stub out execute_command
     FileUtils.chdir(workdir) do
       capture(:stdout) {
-        Packager::CLI.start(['execute', definition])
+        Packager::CLI.start(['execute', './definition'])
       }
 
       verify_test_package('foo.test', {
@@ -87,7 +88,7 @@ describe "Packager integration" do
     end
   end
 
-  it "can create a package with two file" do
+  it "can create a package with two files" do
     FileUtils.chdir(sourcedir) do
       FileUtils.touch('file1')
       append_to_file('file3', 'stuff')
@@ -96,7 +97,7 @@ describe "Packager integration" do
     # This is a wart.
     $sourcedir = sourcedir
 
-    append_to_file(definition, "
+    append_to_file('definition', "
       package {
         name 'foo'
         version '0.0.1'
@@ -115,7 +116,7 @@ describe "Packager integration" do
 
     FileUtils.chdir(workdir) do
       capture(:stdout) {
-        Packager::CLI.start(['execute', definition])
+        Packager::CLI.start(['execute', './definition'])
       }
 
       verify_test_package('foo.test', {

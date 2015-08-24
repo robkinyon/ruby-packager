@@ -2,3 +2,4 @@
 --tty
 --require spec_helper
 -I lib
+--order rand
