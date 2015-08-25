@@ -1,4 +1,7 @@
+require './spec/dsl/context.rb'
 describe Packager::DSL do
+  include_context :dsl
+
   it "handles a dependency" do
     items = parse_dsl {
       package {

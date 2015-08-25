@@ -1,5 +1,8 @@
+require './spec/dsl/context.rb'
 describe Packager::DSL do
   context "default type" do
+    include_context :dsl
+
     before(:all) { Packager::DSL.default_type('unknown') }
     after(:all) { Packager::DSL.default_type = nil }
 

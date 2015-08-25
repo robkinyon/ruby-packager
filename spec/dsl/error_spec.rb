@@ -1,5 +1,8 @@
+require './spec/dsl/context.rb'
 describe Packager::DSL do
   context "error handling" do
+    include_context :dsl
+
     it "reject an empty package" do
       expect {
         parse_dsl { package {} }
