@@ -13,8 +13,7 @@
 
 Create the following file:
 ```ruby
-package {
-  name "foo"
+package "foo" do
   version "0.0.1"
   
   file {
@@ -26,22 +25,24 @@ package {
     source "/some/bunch/of/files/*"
     dest "/some/other/place"
   }
-}
+end
 ```
 
 Invoke the associated `packager` script as follows:
 ```shell
-$ packager --output deb <filename>
+$ packager execute <filename>
 ```
 
 You now have `foo-0.0.1.x86_64.deb` with several files in it wherever you
 invoked `packager`.
 
-## Methods
+## DSL
 
-* package
+* package <name>
    * name    String
    * version VersionString
    * file / files
       * source String
       * dest   String
+   * requires Array[String]
+   * provides Array[String]

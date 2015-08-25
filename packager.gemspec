@@ -12,9 +12,12 @@ Gem::Specification.new do |s|
   s.license = 'GPL2'
   s.homepage = 'https://github.com/robkinyon/ruby-packager'
 
-  s.files         = `git ls-files`.split("\n")
+  # Don't tramp along our dot-files, except for .rspec
+  s.files         = `git ls-files`.split("\n").select { |filename|
+    !filename.match(/^\./) || filename == '.rspec'
+  }
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
-  s.executables   = []
+  s.executables   = `git ls-files -- {bin}/*`.split("\n")
   s.require_paths = %w(lib)
 
   s.required_ruby_version = '>= 1.9.3'
@@ -23,7 +26,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'fpm', '~> 1.4', '>= 1.1.0'
   s.add_dependency 'thor', '~> 0.0', '>= 0.19.0'
 
-  # Run rspec tests from rake
   s.add_development_dependency 'rake', '~> 10'
   s.add_development_dependency 'rspec', '~> 3.0.0', '>= 3.0.0'
   s.add_development_dependency 'simplecov', '~> 0'
