@@ -1,5 +1,6 @@
+require './spec/executor/context.rb'
 describe Packager::Executor do
-  subject(:executor) { Packager::Executor.new(:dryrun => true) }
+  include_context :executor
 
   it "handles a dependency" do
     item = Packager::Struct::Package.new(

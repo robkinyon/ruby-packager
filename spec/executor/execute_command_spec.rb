@@ -4,6 +4,7 @@ describe Packager::Executor do
       command
     end
   end
+
   context "#execute_command" do
     it "handles errors" do
       cmd = Packager::Struct::TestCommand.new(
