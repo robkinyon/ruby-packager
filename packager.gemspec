@@ -3,7 +3,7 @@ $:.push File.expand_path('../lib', __FILE__)
 require 'packager/version'
 
 Gem::Specification.new do |s|
-  s.name    = 'packager'
+  s.name    = 'packager-dsl'
   s.version = Packager::VERSION
   s.author  = 'Rob Kinyon'
   s.email   = 'rob.kinyon@gmail.com'
