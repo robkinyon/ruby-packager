@@ -1,8 +1,7 @@
+require './spec/cli/context.rb'
 describe Packager::CLI do
-  subject(:cli) { Packager::CLI.new }
-
-  describe '#execute' do
-    let(:definition) { Tempfile.new('foo').path }
+  context '#execute' do
+    include_context :cli
 
     it "handles nothing passed" do
       expect {
@@ -17,17 +16,18 @@ describe Packager::CLI do
     end
 
     it "handles an empty file" do
+      FileUtils.touch('definition')
       expect {
-        cli.execute(definition)
-      }.to raise_error(Thor::Error, "'#{definition}' produces nothing")
+        cli.execute('definition')
+      }.to raise_error(Thor::Error, "'definition' produces nothing")
     end
 
     it "handles a bad file" do
-      append_to_file(definition, 'package {}')
+      append_to_file('definition', 'package {}')
 
       expect {
-        cli.execute(definition)
-      }.to raise_error(Thor::Error, "'#{definition}' has the following errors:\nEvery package must have a name")
+        cli.execute('definition')
+      }.to raise_error(Thor::Error, "'definition' has the following errors:\nEvery package must have a name")
     end
 
     context "handles a file that works" do
@@ -46,10 +46,10 @@ describe Packager::CLI do
       }
 
       it {
-        append_to_file(definition, 'contents')
+        append_to_file('definition', 'contents')
         expect(
-          capture(:stdout) { cli.execute(definition) }
-        ).to eq("'#{definition}' executed foo\n")
+          capture(:stdout) { cli.execute('definition') }
+        ).to eq("'definition' executed foo\n")
       }
     end
 
@@ -69,10 +69,10 @@ describe Packager::CLI do
       }
 
       it {
-        append_to_file(definition, 'contents')
+        append_to_file('definition', 'contents')
         expect(
-          capture(:stdout) { cli.execute(definition) }
-        ).to eq("'#{definition}' executed foo, bar\n")
+          capture(:stdout) { cli.execute('definition') }
+        ).to eq("'definition' executed foo, bar\n")
       }
     end
   end

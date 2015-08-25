@@ -46,7 +46,6 @@ def capture(stream)
   result
 end
 
-require 'packager/cli'
 require 'tempfile'
 def append_to_file(file, content)
   File.open(file, 'a+') do |f|
