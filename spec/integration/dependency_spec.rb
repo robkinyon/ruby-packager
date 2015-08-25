@@ -2,6 +2,7 @@ require './spec/integration/context.rb'
 describe "Packager integration" do
   context "dependencies" do
     include_context :integration
+    include_context :test_package
 
     it "can create a package with 1 dependency" do
       append_to_file('definition', "

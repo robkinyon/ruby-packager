@@ -9,6 +9,7 @@ require './spec/integration/context.rb'
 describe "Packager integration" do
   context 'files' do
     include_context :integration
+    include_context :test_package
 
     it "can create a package with no files" do
       append_to_file('definition', "

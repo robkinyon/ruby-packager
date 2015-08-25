@@ -4,23 +4,18 @@
 # * dependencies
 # * before/after scripts
 
-require 'fileutils'
 require 'tempfile'
-require 'tmpdir'
 
+require './spec/integration/context.rb'
+require './spec/shared_context/workdir.rb'
 describe 'FPM::Package::Test' do
+  include_context :workdir
+  include_context :test_package
+
   # This is to get access to the 'test' FPM type in the FPM executable.
   before(:all) {
-    @dir = Dir.pwd
-    @includedir = File.join(@dir,'spec/lib')
-  }
-
-  # Do all of our work within a temp directory
-  let(:tempdir) { Dir.mktmpdir }
-  before(:each) { Dir.chdir tempdir }
-  after(:each) {
-    Dir.chdir @dir
-    FileUtils.remove_entry_secure tempdir
+    includedir = File.join(@dir,'spec/lib')
+    @fpm = "ruby -I#{includedir} -rfpm/package/test `which fpm`"
   }
 
   # FIXME: 2>/dev/null is to suppress a Gem::Specification complaint about JSON.
@@ -28,7 +23,7 @@ describe 'FPM::Package::Test' do
   # and something gets confused because both are sufficient for JSON >= 1.7.7
   # You can disable it by setting the envvar VERBOSE=1
   def execute(cmd)
-    cmd.unshift "ruby -I#{@includedir} -rfpm/package/test `which fpm`"
+    cmd.unshift @fpm
     cmd.push '2>/dev/null' unless ENV['VERBOSE'] && ENV['VERBOSE'] != '0'
     return eval `#{cmd.join(' ')}`# 
   end
