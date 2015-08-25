@@ -1,7 +1,7 @@
 # Packager
 
-[![Gem Version](https://img.shields.io/gem/v/packager.svg)](https://rubygems.org/gems/packager)
-[![Gem Downloads](https://img.shields.io/gem/dt/packager.svg)](https://rubygems.org/gems/packager)
+[![Gem Version](https://img.shields.io/gem/v/packager.svg)](https://rubygems.org/gems/packager-dsl)
+[![Gem Downloads](https://img.shields.io/gem/dt/packager.svg)](https://rubygems.org/gems/packager-dsl)
 [![Yard Docs](http://img.shields.io/badge/yard-docs-blue.svg)](http://rubydoc.info/github/robkinyon/ruby-packager)
 
 [![Build Status](https://img.shields.io/travis/robkinyon/ruby-packager.svg)](https://travis-ci.org/robkinyon/ruby-packager)
