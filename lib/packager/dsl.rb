@@ -36,11 +36,12 @@ class Packager::DSL < DSL::Maker
     :type => Any,
     :files => ArrayOf[copy_file_dsl],
     :file => AliasOf(:files),
+    :requires => ArrayOf[String],
   }) do |*args|
     type(Packager::DSL.default_type) unless type
     default(:name, args, 0)
 
-    Packager::Struct::Package.new(name, version, type, files)
+    Packager::Struct::Package.new(name, version, type, files, requires)
   end
   add_verification(:package) do |item|
     return 'Every package must have a name' unless item.name

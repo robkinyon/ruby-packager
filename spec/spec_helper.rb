@@ -46,6 +46,10 @@ def capture(stream)
   result
 end
 
+def parse_dsl(&block)
+  Packager::DSL.execute_dsl(&block)
+end
+
 require 'packager/cli'
 require 'tempfile'
 def append_to_file(file, content)

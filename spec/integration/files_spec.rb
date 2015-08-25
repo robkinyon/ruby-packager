@@ -5,128 +5,99 @@
 # Note: We assume that fpm produces good packages of other types, given a correct
 # invocations.
 
-require 'fileutils'
-require 'tmpdir'
-
+require './spec/integration/context.rb'
 describe "Packager integration" do
-  before(:all) { Packager::DSL.default_type('test') }
-  after(:all) { Packager::DSL.default_type = nil }
+  context 'files' do
+    include_context :integration
 
-  # This is to get access to the 'test' FPM type in the FPM executable.
-  before(:all) {
-    @dir = Dir.pwd
-    Packager::Struct::Command.default_executable = "ruby -I#{File.join(@dir,'spec/lib')} -rfpm/package/test `which fpm`"
-  }
-  after(:all) {
-    Packager::Struct::Command.default_executable = 'fpm'
-  }
-
-  # Need to clean up because doing the let() doesn't trigger the automatic
-  # removal using the block form of Dir.mktmpdir would do.
-  let(:sourcedir) { Dir.mktmpdir }
-  let(:workdir)   { Dir.mktmpdir }
-  before(:each) { FileUtils.chdir(workdir) }
-  after(:each)  {
-    FileUtils.chdir @dir
-    [sourcedir, workdir].each do |dir|
-      FileUtils.remove_entry_secure(dir)
-    end
-  }
-
-  it "can create a package with no files" do
-    append_to_file('definition', "
-      package {
-        name 'foo'
-        version '0.0.1'
-      }
-    ")
-
-    FileUtils.chdir(workdir) do
-      capture(:stdout) {
-        Packager::CLI.start(['execute', './definition'])
-      }
-
-      verify_test_package('foo.test', {
-        'name' => 'foo',
-        'version' => '0.0.1',
-      })
-    end
-  end
-
-  before(:each) { $sourcedir = sourcedir }
-  before(:all) {
-    Packager::DSL.add_helper(:sourcedir) do |path|
-      File.join($sourcedir, path)
-    end
-  }
-
-  it "can create a package with one file" do
-    FileUtils.chdir(sourcedir) do
-      FileUtils.touch('file1')
-    end
-
-    append_to_file('definition', "
-      package {
-        name 'foo'
-        version '0.0.1'
-
-        file {
-          source sourcedir('file1')
-          dest '/foo/bar/file2'
+    it "can create a package with no files" do
+      append_to_file('definition', "
+        package {
+          name 'foo'
+          version '0.0.1'
         }
-      }
-    ")
+      ")
 
-    # Stub out execute_command
-    FileUtils.chdir(workdir) do
-      capture(:stdout) {
-        Packager::CLI.start(['execute', './definition'])
-      }
-
-      verify_test_package('foo.test', {
-        'name' => 'foo',
-        'version' => '0.0.1',
-      }, {
-        'foo/bar/file2' => '',
-      })
-    end
-  end
-
-  it "can create a package with two files" do
-    FileUtils.chdir(sourcedir) do
-      FileUtils.touch('file1')
-      append_to_file('file3', 'stuff')
-    end
-
-    append_to_file('definition', "
-      package {
-        name 'foo'
-        version '0.0.1'
-
-        file {
-          source sourcedir('file1')
-          dest '/foo/bar/file2'
+      FileUtils.chdir(workdir) do
+        capture(:stdout) {
+          Packager::CLI.start(['execute', './definition'])
         }
 
-        file {
-          source sourcedir('file3')
-          dest '/bar/foo/file4'
+        verify_test_package('foo.test', {
+          'name' => 'foo',
+          'version' => '0.0.1',
+        })
+      end
+    end
+
+    it "can create a package with one file" do
+      FileUtils.chdir(sourcedir) do
+        FileUtils.touch('file1')
+      end
+
+      append_to_file('definition', "
+        package {
+          name 'foo'
+          version '0.0.1'
+
+          file {
+            source sourcedir('file1')
+            dest '/foo/bar/file2'
+          }
         }
-      }
-    ")
+      ")
 
-    FileUtils.chdir(workdir) do
-      capture(:stdout) {
-        Packager::CLI.start(['execute', './definition'])
-      }
+      # Stub out execute_command
+      FileUtils.chdir(workdir) do
+        capture(:stdout) {
+          Packager::CLI.start(['execute', './definition'])
+        }
 
-      verify_test_package('foo.test', {
-        'name' => 'foo',
-        'version' => '0.0.1',
-      }, {
-        'foo/bar/file2' => '',
-        'bar/foo/file4' => 'stuff',
-      })
+        verify_test_package('foo.test', {
+          'name' => 'foo',
+          'version' => '0.0.1',
+        }, {
+          'foo/bar/file2' => '',
+        })
+      end
+    end
+
+    it "can create a package with two files" do
+      FileUtils.chdir(sourcedir) do
+        FileUtils.touch('file1')
+        append_to_file('file3', 'stuff')
+      end
+
+      append_to_file('definition', "
+        package {
+          name 'foo'
+          version '0.0.1'
+
+          file {
+            source sourcedir('file1')
+            dest '/foo/bar/file2'
+          }
+
+          file {
+            source sourcedir('file3')
+            dest '/bar/foo/file4'
+          }
+        }
+      ")
+
+      FileUtils.chdir(workdir) do
+        capture(:stdout) {
+          Packager::CLI.start(['execute', './definition'])
+        }
+
+        verify_test_package('foo.test', {
+          'name' => 'foo',
+          'version' => '0.0.1',
+        }, {
+          'foo/bar/file2' => '',
+          'bar/foo/file4' => 'stuff',
+        })
+      end
     end
   end
 end

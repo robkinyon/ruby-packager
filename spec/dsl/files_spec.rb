@@ -1,10 +1,6 @@
 describe Packager::DSL do
-  def parse(&block)
-    Packager::DSL.execute_dsl(&block)
-  end
-
   it "handles one file" do
-    items = parse {
+    items = parse_dsl {
       package {
         name 'foo'
         version '0.0.1'
@@ -21,7 +17,7 @@ describe Packager::DSL do
   end
 
   it "handles two files" do
-    items = parse {
+    items = parse_dsl {
       package {
         name 'foo'
         version '0.0.1'

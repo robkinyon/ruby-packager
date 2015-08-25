@@ -1,12 +1,21 @@
 # Examine:
 # https://gabebw.wordpress.com/2011/03/21/temp-files-in-rspec/
 
+require 'fileutils'
+require 'tmpdir'
+
 describe Packager::CLI do
   subject(:cli) { Packager::CLI.new }
 
-  describe '#validate' do
-    let(:definition) { Tempfile.new('foo').path }
+  let(:workdir) { Dir.mktmpdir }
+  before(:all)  { @dir = Dir.pwd }
+  before(:each) { FileUtils.chdir(workdir) }
+  after(:each)  {
+    FileUtils.chdir @dir
+    FileUtils.remove_entry_secure(workdir)
+  }
 
+  describe '#validate' do
     it "handles nothing passed" do
       expect {
         cli.validate
@@ -20,21 +29,22 @@ describe Packager::CLI do
     end
 
     it "handles an empty file" do
+      FileUtils.touch('definition')
       expect {
-        cli.validate(definition)
-      }.to raise_error(Thor::Error, "'#{definition}' produces nothing")
+        cli.validate('definition')
+      }.to raise_error(Thor::Error, "'definition' produces nothing")
     end
 
     it "handles a bad file" do
-      append_to_file(definition, 'package {}')
+      append_to_file('definition', 'package {}')
 
       expect {
-        cli.validate(definition)
-      }.to raise_error(Thor::Error, "'#{definition}' has the following errors:\nEvery package must have a name")
+        cli.validate('definition')
+      }.to raise_error(Thor::Error, "'definition' has the following errors:\nEvery package must have a name")
     end
 
     it "handles a file that works" do
-      append_to_file(definition, "
+      append_to_file('definition', "
         package {
           name 'foo'
           version '0.0.1'
@@ -43,8 +53,8 @@ describe Packager::CLI do
       ")
 
       expect(
-        capture(:stdout) { cli.validate(definition) }
-      ).to eq("'#{definition}' parses cleanly\n")
+        capture(:stdout) { cli.validate('definition') }
+      ).to eq("'definition' parses cleanly\n")
     end
   end
 end

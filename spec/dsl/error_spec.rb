@@ -1,31 +1,27 @@
 describe Packager::DSL do
-  def parse(&block)
-    Packager::DSL.execute_dsl(&block)
-  end
-
   context "error handling" do
     it "reject an empty package" do
       expect {
-        parse { package {} }
+        parse_dsl { package {} }
       }.to raise_error("Every package must have a name")
     end
 
     it "reject a package without a name" do
       expect {
-        parse { package { version '0.0.1' } }
+        parse_dsl { package { version '0.0.1' } }
       }.to raise_error("Every package must have a name")
     end
 
     context "for versions" do
       it "reject a package without a version" do
         expect {
-          parse { package { name 'foo' } }
+          parse_dsl { package { name 'foo' } }
         }.to raise_error("Every package must have a version")
       end
 
       it "rejects a package with a bad version" do
         expect {
-          parse {
+          parse_dsl {
             package {
               name 'foo'
               version 'b'
@@ -37,7 +33,7 @@ describe Packager::DSL do
 
     it "rejects a package without a type" do
       expect {
-        parse {
+        parse_dsl {
           package {
             name 'foo'
             version '0.0.1'

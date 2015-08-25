@@ -33,10 +33,10 @@ class Packager
       end
 
       cmd = Packager::Struct::Command.new(
-        :name    => item.name,
-        :version => item.version,
-        #:source  => source,
-        :target  => item.type,
+        :name     => item.name,
+        :version  => item.version,
+        :target   => item.type,
+        :requires => item.requires,
       )
 
       Dir.glob('*') do |entry|
@@ -53,8 +53,7 @@ class Packager
     def execute_command(cmd)
       return if dryrun
 
-      x = `#{cmd.to_system.join(' ')} 2>/dev/null`
-      #system *cmd
+      x = `#{cmd.to_system.join(' ')}`
       rv = eval(x)
       raise rv[:error] if rv[:error]
       return rv[:path]

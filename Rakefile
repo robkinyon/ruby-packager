@@ -13,7 +13,7 @@ task :default => [:spec]
 RSpec::Core::RakeTask.new
 
 task :unitspec do
-  sh('rspec', *Dir.glob('spec/{cli,dsl,executor}'))
+  sh('rspec', *Dir.glob('spec/{cli,dsl,executor,struct}'))
 end
 
 # Configure `rake clobber` to delete all generated files
