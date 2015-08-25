@@ -25,5 +25,27 @@ describe "Packager integration" do
         })
       end
     end
+
+    it "can create a package with 1 provides" do
+      append_to_file('definition', "
+        package {
+          name 'foo'
+          version '0.0.1'
+          provides 'bar'
+        }
+      ")
+
+      FileUtils.chdir(workdir) do
+        capture(:stdout) {
+          Packager::CLI.start(['execute', './definition'])
+        }
+
+        verify_test_package('foo.test', {
+          'name' => 'foo',
+          'version' => '0.0.1',
+          'provides' => ['bar'],
+        })
+      end
+    end
   end
 end

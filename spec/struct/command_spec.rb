@@ -46,5 +46,22 @@ describe Packager::Struct::Command do
         '-s', 'empty', '-t', 'test',
       ])
     end
+
+    it "handles provides" do
+      cmd = Packager::Struct::Command.new(
+        :name => 'foo',
+        :version => '0.0.1',
+        :target  => 'test',
+        :provides => ['foo'],
+      )
+
+      expect(cmd.to_system).to eq([
+        'fpm',
+        '--name', 'foo',
+        '--version', '0.0.1',
+        '--provides', 'foo',
+        '-s', 'empty', '-t', 'test',
+      ])
+    end
   end
 end

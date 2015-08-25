@@ -59,6 +59,24 @@ describe 'FPM::Package::Test' do
     })
   end
 
+  it "creates an empty package with provides" do
+    execute([
+      '--name foo',
+      '--version 0.0.2',
+      '--provides baz',
+      '--provides bar',
+      '-s empty',
+      '-t test',
+    ])
+
+    verify_test_package('foo.test', {
+      'name' => 'foo',
+      'version' => '0.0.2',
+      'provides' => [ 'bar', 'baz' ],
+    })
+  end
+
+
   it "creates a package with files" do
     append_to_file('foo', 'stuff')
 

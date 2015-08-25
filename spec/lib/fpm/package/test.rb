@@ -20,6 +20,7 @@ class FPM::Package::Test < FPM::Package::Dir
         :name => name,
         :version => version,
         :requires => dependencies.sort,
+        :provides => provides.sort,
       }.to_json)
     end
   end

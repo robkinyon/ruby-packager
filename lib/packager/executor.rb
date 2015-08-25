@@ -37,6 +37,7 @@ class Packager
         :version  => item.version,
         :target   => item.type,
         :requires => item.requires,
+        :provides => item.provides,
       )
 
       Dir.glob('*') do |entry|

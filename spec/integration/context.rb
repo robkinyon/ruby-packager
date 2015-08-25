@@ -35,6 +35,7 @@ RSpec.shared_context :test_package do
     expect(File).to exist(File.join(name, 'META.json'))
     expect(JSON.parse(IO.read(File.join(name, 'META.json')))).to eq({
       'requires' => [],
+      'provides' => [],
     }.merge(metadata))
     if files.empty?
       expect(Dir[File.join(name, 'contents/*')].empty?).to be(true)

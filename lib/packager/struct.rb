@@ -16,12 +16,13 @@ class Packager::Struct < Struct
   end
 
   class Package < Packager::Struct.new(
-    :name, :version, :type, :files, :requires,
+    :name, :version, :type, :files, :requires, :provides,
   )
     def initialize(*args)
       super(*args)
       self.files ||= []
       self.requires ||= []
+      self.provides ||= []
     end
   end
 
@@ -32,7 +33,7 @@ class Packager::Struct < Struct
 
   class Command < Packager::Struct.new(
     :executable, :name, :version,
-    :source, :target, :directories, :requires,
+    :source, :target, :directories, :requires, :provides,
   )
     class << self
       attr_accessor :default_executable
@@ -44,6 +45,7 @@ class Packager::Struct < Struct
       self.executable ||= self.class.default_executable || 'fpm'
       self.directories ||= {}
       self.requires ||= []
+      self.provides ||= []
     end
 
     def add_directory(*items)
@@ -62,6 +64,10 @@ class Packager::Struct < Struct
 
       self.requires.uniq.each do |req|
         cmd.concat(['--depends', req])
+      end
+
+      self.provides.uniq.each do |req|
+        cmd.concat(['--provides', req])
       end
 
       cmd.concat(['-s', source, '-t', target])
