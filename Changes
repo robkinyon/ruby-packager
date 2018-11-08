@@ -1,4 +1,9 @@
 Revision history for Packager (ordered by revision number).
 
+0.1.0 Nov 08 2018
+   - Update license to MIT
+   - Update dsl-maker dependency to 1.0.0 for its license to be MIT
+   - Update yard dependency per GitHub security alert
+
 0.0.1 Aug 03 2015
    - Initial release

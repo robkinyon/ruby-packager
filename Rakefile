@@ -10,7 +10,9 @@ require File.expand_path('on_what', File.dirname(__FILE__))
 task :default => [:spec]
 
 # Use default rspec rake task
-RSpec::Core::RakeTask.new
+RSpec::Core::RakeTask.new do |t|
+  t.verbose = false
+end
 
 task :unitspec do
   sh('rspec', *Dir.glob('spec/{cli,dsl,executor,struct}'))

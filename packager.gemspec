@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.email   = 'rob.kinyon@gmail.com'
   s.summary = 'DSL for creating packages'
   s.description = 'DSL for creating a package that is easy to work with.'
-  s.license = 'GPL2'
+  s.license = 'MIT'
   s.homepage = 'https://github.com/robkinyon/ruby-packager'
 
   # Don't tramp along our dot-files, except for .rspec
@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '>= 1.9.3'
 
-  s.add_dependency 'dsl_maker', '~> 0.1', '>= 0.1.1'
+  s.add_dependency 'dsl_maker', '~> 1.0', '>= 1.0.0'
   s.add_dependency 'fpm', '~> 1.4', '>= 1.1.0'
   s.add_dependency 'thor', '~> 0.0', '>= 0.19.0'
 
@@ -37,7 +37,7 @@ Gem::Specification.new do |s|
   if !on_travis? && !on_jruby? && !on_1_8?
     # Github flavored markdown in YARD documentation
     # http://blog.nikosd.com/2011/11/github-flavored-markdown-in-yard.html
-    s.add_development_dependency 'yard', '~> 0.8'
+    s.add_development_dependency 'yard', '>= 0.9.11'
     s.add_development_dependency 'redcarpet', '~> 3'
     s.add_development_dependency 'github-markup', '~> 1.3'
   end

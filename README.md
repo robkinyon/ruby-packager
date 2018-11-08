@@ -15,6 +15,7 @@ Create the following file:
 ```ruby
 package "foo" do
   version "0.0.1"
+  type "deb"
   
   file {
     source "/some/place/in/filesystem"
@@ -40,6 +41,7 @@ invoked `packager`.
 
 * package <name>
    * name    String
+   * type    String
    * version VersionString
    * file / files
       * source String
