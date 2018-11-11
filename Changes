@@ -1,5 +1,9 @@
 Revision history for Packager (ordered by revision number).
 
+0.1.1 Nov 10 2018
+   - [FEATURE] Add the ability to provide variables
+   - [FEATURE] Add the ability to specify `--dryrun`
+
 0.1.0 Nov 08 2018
    - Update license to MIT
    - Update dsl-maker dependency to 1.0.0 for its license to be MIT

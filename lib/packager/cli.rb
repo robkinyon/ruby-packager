@@ -18,10 +18,19 @@ class Packager::CLI < Thor
   end
 
   desc :execute, "Execute one or more package DSL definition(s)"
+  option :var, type: :hash
+  option :dryrun, type: :boolean
   default_task :execute
   def execute(*args)
     if args.empty?
       raise Thor::Error, "No filenames provided for execute"
+    end
+
+    (options['var'] || {}).each do |name, value|
+      if Packager::DSL.reserved_words.include? name
+        raise Thor::Error, "'#{name}' is a reserved word"
+      end
+      Packager::DSL.add_helper(name.to_sym) { value }
     end
 
     args.each do |filename|
@@ -39,7 +48,9 @@ class Packager::CLI < Thor
         raise Thor::Error, "'#{filename}' produces nothing"
       end
 
-      packages = Packager::Executor.new.execute_on(items)
+      packages = Packager::Executor.new(
+        dryrun: options['dryrun'],
+      ).execute_on(items)
 
       puts "'#{filename}' executed #{packages.join(', ')}"
     end

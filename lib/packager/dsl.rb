@@ -10,6 +10,14 @@ class Packager::DSL < DSL::Maker
       @default_type = args[0] unless args.empty?
       @default_type
     end
+
+    def reserved_words
+      %w(
+        package
+        name version type files file requires provides
+        source dest
+      )
+    end
   end
 
   add_type(VersionString = {}) do |attr, *args|
