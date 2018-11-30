@@ -17,12 +17,21 @@ class Packager::Struct < Struct
 
   class Package < Packager::Struct.new(
     :name, :version, :type, :files, :requires, :provides,
+    :before_install, :after_install,
+    :before_remove, :after_remove,
+    :before_upgrade, :after_upgrade,
   )
     def initialize(*args)
       super(*args)
       self.files ||= []
       self.requires ||= []
       self.provides ||= []
+      self.before_install ||= []
+      self.after_install  ||= []
+      self.before_remove  ||= []
+      self.after_remove   ||= []
+      self.before_upgrade ||= []
+      self.after_upgrade  ||= []
     end
   end
 
@@ -34,6 +43,9 @@ class Packager::Struct < Struct
   class Command < Packager::Struct.new(
     :executable, :name, :version,
     :source, :target, :directories, :requires, :provides,
+    :before_install, :after_install,
+    :before_remove, :after_remove,
+    :before_upgrade, :after_upgrade,
   )
     class << self
       attr_accessor :default_executable
@@ -44,8 +56,19 @@ class Packager::Struct < Struct
       self.source ||= 'empty'
       self.executable ||= self.class.default_executable || 'fpm'
       self.directories ||= {}
-      self.requires ||= []
-      self.provides ||= []
+
+      @unique_mappers = {
+        :requires => '--depends',
+        :provides => '--provides',
+        :before_install => '--before-install',
+        :after_install  => '--after-install',
+        :before_remove  => '--before-remove',
+        :after_remove   => '--after-remove',
+        :before_upgrade => '--before-upgrade',
+        :after_upgrade  => '--after-upgrade',
+      }
+
+      @unique_mappers.keys.each {|i| self[i] ||= [] }
     end
 
     def add_directory(*items)
@@ -62,12 +85,10 @@ class Packager::Struct < Struct
         '--version', version,
       ]
 
-      self.requires.uniq.each do |req|
-        cmd.concat(['--depends', req])
-      end
-
-      self.provides.uniq.each do |req|
-        cmd.concat(['--provides', req])
+      @unique_mappers.each do |element, flag|
+        self[element].uniq.each do |item|
+          cmd.concat([flag, item])
+        end
       end
 
       cmd.concat(['-s', source, '-t', target])

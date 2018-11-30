@@ -63,5 +63,107 @@ describe Packager::Struct::Command do
         '-s', 'empty', '-t', 'test',
       ])
     end
+
+    it "handles before_install" do
+      cmd = Packager::Struct::Command.new(
+        :name => 'foo',
+        :version => '0.0.1',
+        :target  => 'test',
+        :before_install => ['foo'],
+      )
+
+      expect(cmd.to_system).to eq([
+        'fpm',
+        '--name', 'foo',
+        '--version', '0.0.1',
+        '--before-install', 'foo',
+        '-s', 'empty', '-t', 'test',
+      ])
+    end
+
+    it "handles after_install" do
+      cmd = Packager::Struct::Command.new(
+        :name => 'foo',
+        :version => '0.0.1',
+        :target  => 'test',
+        :after_install => ['foo'],
+      )
+
+      expect(cmd.to_system).to eq([
+        'fpm',
+        '--name', 'foo',
+        '--version', '0.0.1',
+        '--after-install', 'foo',
+        '-s', 'empty', '-t', 'test',
+      ])
+    end
+
+    it "handles before_remove" do
+      cmd = Packager::Struct::Command.new(
+        :name => 'foo',
+        :version => '0.0.1',
+        :target  => 'test',
+        :before_remove => ['foo'],
+      )
+
+      expect(cmd.to_system).to eq([
+        'fpm',
+        '--name', 'foo',
+        '--version', '0.0.1',
+        '--before-remove', 'foo',
+        '-s', 'empty', '-t', 'test',
+      ])
+    end
+
+    it "handles after_remove" do
+      cmd = Packager::Struct::Command.new(
+        :name => 'foo',
+        :version => '0.0.1',
+        :target  => 'test',
+        :after_remove => ['foo'],
+      )
+
+      expect(cmd.to_system).to eq([
+        'fpm',
+        '--name', 'foo',
+        '--version', '0.0.1',
+        '--after-remove', 'foo',
+        '-s', 'empty', '-t', 'test',
+      ])
+    end
+
+    it "handles before_upgrade" do
+      cmd = Packager::Struct::Command.new(
+        :name => 'foo',
+        :version => '0.0.1',
+        :target  => 'test',
+        :before_upgrade => ['foo'],
+      )
+
+      expect(cmd.to_system).to eq([
+        'fpm',
+        '--name', 'foo',
+        '--version', '0.0.1',
+        '--before-upgrade', 'foo',
+        '-s', 'empty', '-t', 'test',
+      ])
+    end
+
+    it "handles after_upgrade" do
+      cmd = Packager::Struct::Command.new(
+        :name => 'foo',
+        :version => '0.0.1',
+        :target  => 'test',
+        :after_upgrade => ['foo'],
+      )
+
+      expect(cmd.to_system).to eq([
+        'fpm',
+        '--name', 'foo',
+        '--version', '0.0.1',
+        '--after-upgrade', 'foo',
+        '-s', 'empty', '-t', 'test',
+      ])
+    end
   end
 end

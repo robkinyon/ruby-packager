@@ -46,12 +46,21 @@ class Packager::DSL < DSL::Maker
     :file => AliasOf(:files),
     :requires => ArrayOf[String],
     :provides => ArrayOf[String],
+    :before_install => ArrayOf[String],
+    :after_install  => ArrayOf[String],
+    :before_remove  => ArrayOf[String],
+    :after_remove   => ArrayOf[String],
+    :before_upgrade => ArrayOf[String],
+    :after_upgrade  => ArrayOf[String],
   }) do |*args|
     type(Packager::DSL.default_type) unless type
     default(:name, args, 0)
 
     Packager::Struct::Package.new(
       name, version, type, files, requires, provides,
+      before_install, after_install,
+      before_remove, after_remove,
+      before_upgrade, after_upgrade,
     )
   end
   add_verification(:package) do |item|

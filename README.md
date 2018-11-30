@@ -63,11 +63,12 @@ Consider providing helpers for the following:
 ## DSL
 
 * package <name>
-   * name    String
-   * type    String
-   * version VersionString
-   * file / files
-      * source String
-      * dest   String
-   * requires Array[String]
-   * provides Array[String]
+   * `name`    String
+   * `type`    String
+   * `version` VersionString
+   * `file` / `files`
+      * `source` String
+      * `dest`   String
+   * `requires` Array[String]
+   * `provides` Array[String]
+   * `before_install` Array[String]

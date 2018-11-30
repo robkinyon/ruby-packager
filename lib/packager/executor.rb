@@ -38,6 +38,12 @@ class Packager
         :target   => item.type,
         :requires => item.requires,
         :provides => item.provides,
+        :before_install => item.before_install,
+        :after_install  => item.after_install,
+        :before_remove  => item.before_remove,
+        :after_remove   => item.after_remove,
+        :before_upgrade => item.before_upgrade,
+        :after_upgrade  => item.after_upgrade,
       )
 
       Dir.glob('*') do |entry|

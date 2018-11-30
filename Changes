@@ -1,5 +1,14 @@
 Revision history for Packager (ordered by revision number).
 
+0.1.2 Nov 30 2018
+   - [FEATURE] Add support for the following flags:
+       * --before-install (aliased as --pre-install)
+       * --after-install (aliased as --post-install)
+       * --before-remove (aliased as --pre-uninstall)
+       * --after-remove (aliased as --post-uninstall)
+       * --before-upgrade
+       * --after-upgrade
+
 0.1.1 Nov 10 2018
    - [FEATURE] Add the ability to provide variables
    - [FEATURE] Add the ability to specify `--dryrun`
