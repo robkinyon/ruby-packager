@@ -69,6 +69,15 @@ Consider providing helpers for the following:
    * `file` / `files`
       * `source` String
       * `dest`   String
+   * `link` / `links`
+      * `source` String
+      * `dest`   String
+      * `link`   Boolean
    * `requires` Array[String]
    * `provides` Array[String]
    * `before_install` Array[String]
+
+### Link
+
+If `link` is true in your file, then a symbolic link will be created instead of
+a file being copied.

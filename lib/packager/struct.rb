@@ -36,7 +36,7 @@ class Packager::Struct < Struct
   end
 
   class File < Packager::Struct.new(
-    :source, :dest,
+    :source, :dest, :link,
   )
   end
 

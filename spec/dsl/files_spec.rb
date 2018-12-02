@@ -18,6 +18,7 @@ describe Packager::DSL do
       expect(items[0].files).to be_instance_of(Array)
       expect(items[0].files[0].source).to eq('foo')
       expect(items[0].files[0].dest).to eq('bar')
+      expect(items[0].files[0].link).to be_falsey
     end
 
     it "handles two files" do
@@ -41,6 +42,25 @@ describe Packager::DSL do
       expect(items[0].files[0].dest).to eq('bar')
       expect(items[0].files[1].source).to eq('foo2')
       expect(items[0].files[1].dest).to eq('bar2')
+    end
+
+    it "handles a link" do
+      items = parse_dsl {
+        package {
+          name 'foo'
+          version '0.0.1'
+          type 'test'
+          file {
+            source 'foo'
+            dest 'bar'
+            link true
+          }
+        }
+      }
+      expect(items[0].files).to be_instance_of(Array)
+      expect(items[0].files[0].source).to eq('foo')
+      expect(items[0].files[0].dest).to eq('bar')
+      expect(items[0].files[0].link).to be_truthy
     end
   end
 end

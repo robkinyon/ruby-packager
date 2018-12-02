@@ -34,8 +34,9 @@ class Packager::DSL < DSL::Maker
   copy_file_dsl = generate_dsl({
     :source => String,
     :dest   => String,
+    :link   => Boolean,
   }) do
-    Packager::Struct::File.new(source, dest)
+    Packager::Struct::File.new(source, dest, link)
   end
 
   add_entrypoint(:package, {

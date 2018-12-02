@@ -4,21 +4,29 @@ require 'tmpdir'
 
 class Packager
   class Executor
-    attr_accessor :commands, :dryrun
+    attr_accessor :commands, :dryrun, :workdir
 
     def initialize(opts={})
       self.dryrun = !!opts[:dryrun]
       self.commands = []
     end
 
+    def with_workdir(&block)
+      if workdir
+        Dir.chdir(workdir, &block)
+      else
+        Dir.mktmpdir do |dir|
+          Dir.chdir(dir, &block)
+        end
+      end
+    end
+
     def execute_on(items)
       curdir = Dir.pwd
       items.collect do |item|
-        Dir.mktmpdir do |tempdir|
-          Dir.chdir(tempdir) do
-            path = create_package_for(item)
-            FileUtils.mv(path, curdir) if path
-          end
+        with_workdir do
+          path = create_package_for(item)
+          FileUtils.mv(path, curdir) if path
         end
       end
     end
@@ -28,7 +36,11 @@ class Packager
         item.files.each do |file|
           dest = (file.dest || '').gsub /^\//, ''
           FileUtils.mkdir_p File.dirname(dest)
-          FileUtils.cp_r(file.source, dest)
+          if file.link
+            FileUtils.ln_s(file.source, dest)
+          else
+            FileUtils.cp_r(file.source, dest)
+          end
         end
       end
 
