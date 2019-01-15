@@ -6,9 +6,18 @@ describe Packager::Executor do
   end
 
   context "#execute_command" do
-    it "handles errors" do
+    it "handles errors indicated by the presence of :error key" do
       cmd = Packager::Struct::TestCommand.new(
         :command => ["echo '{:error=>\"foo\"}'"]
+      )
+      expect {
+        subject.execute_command(cmd)
+      }.to raise_error('foo')
+    end
+
+    it "handles errors indicated by the presence of :level=>:error" do
+      cmd = Packager::Struct::TestCommand.new(
+        :command => ["echo '{:message=>\"foo\", :level=>:error}'"]
       )
       expect {
         subject.execute_command(cmd)

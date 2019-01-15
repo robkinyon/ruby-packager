@@ -37,7 +37,7 @@ class Packager
           dest = (file.dest || '').gsub /^\//, ''
           FileUtils.mkdir_p File.dirname(dest)
           if file.link
-            FileUtils.ln_s(file.source, dest)
+            FileUtils.ln_s(file.source, dest, force: true)
           else
             FileUtils.cp_r(file.source, dest)
           end
@@ -75,6 +75,7 @@ class Packager
       x = `#{cmd.to_system.join(' ')}`
       rv = eval(x)
       raise rv[:error] if rv[:error]
+      raise rv[:message] if rv[:level] == :error
       return rv[:path]
     end
   end

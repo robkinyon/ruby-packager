@@ -1,5 +1,9 @@
 Revision history for Packager (ordered by revision number).
 
+0.1.4 Jan 14 2019
+   - [FIX] Fix symlink creation
+   - [FIX] Improve detection of fpm errors
+
 0.1.3 Dec 01 2018
    - [FEATURE] Add support for symbolic links.
 
