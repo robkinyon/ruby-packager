@@ -1,5 +1,8 @@
 Revision history for Packager (ordered by revision number).
 
+0.1.5 Jan 14 2019
+   - [FIX] Relax fpm version constraint in gemspec
+
 0.1.4 Jan 14 2019
    - [FIX] Fix symlink creation
    - [FIX] Improve detection of fpm errors
